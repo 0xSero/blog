@@ -18,12 +18,6 @@ const projectsData = [
     href: 'https://open.spotify.com/episode/4u5faDs9DEPvZMDTwIRR4L?si=45844b55592f4f3a',
   },
   {
-    title: 'Ricochet Exchange - (Production)',
-    description: `Dollar Cost Averaging DEX leveraging Superfluid money streams.`,
-    imgSrc: '/static/images/ricochetexchange.png',
-    href: 'https://ricochet-exchange.eth.limo',
-  },
-  {
     title: 'Superfluid Finance - (Production)',
     description: `Superfluid Console is an explorer meant for developers and advanced users of the Superfluid Protocol.`,
     imgSrc: '/static/images/superfluid.png',
