@@ -2,7 +2,7 @@ const projectsData = [
   {
     title: 'POKT Network',
     description: 'Website development and modernisation, CMS development, data migration, research.',
-    imgSrc: 'https://i.imgur.com/Rx1D4fL.png',
+    imgSrc: '/static/images/Logo-wordm-black.png',
     href: 'https://pokt.network'
   },
   {
