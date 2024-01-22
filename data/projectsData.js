@@ -1,9 +1,15 @@
 const projectsData = [
   {
+    title: 'POKT Network',
+    description: 'Website development and modernisation, CMS development, data migration, research.',
+    imgSrc: 'https://i.imgur.com/Rx1D4fL.png',
+    href: 'https://pokt.network'
+  },
+  {
     title: 'Decentra',
     description: `Imbedding Safe in familiar experiences, an online financial management chat app.`,
     imgSrc: '/static/images/decentra-app.png',
-    href: 'https://app.decentra.so/',
+    href: 'https://web-core-swart.vercel.app/chat',
   },
   {
     title: 'Synpress Documentation',
