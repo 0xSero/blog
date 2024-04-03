@@ -1,0 +1,108 @@
+---
+title: 'A modern day scam'
+date: '04 / 03 / 2024'
+tags: ['Security', 'Privacy', 'Blockchain', 'Cryptocurrency']
+draft: false
+summary: 'Investigating a modern day employment scam'
+---
+
+## Modern scams:
+
+Where there is money, there are thieves trying to steal it. The internet has exposed people to an infinite variations of scams, and while we might think we are "too smart to get scammed", or "not dumb enough to fall for something so obvious" we can all be victims.
+You could be opening a **work email**, and compromise your company. You can wake up to a scary looking SMS, and log in to your "bank" to fix the issue, only to give away your credentials to someone from across the world.
+
+### Phishing scams:
+
+It is well known that unsophisticated scammers and hackers purposefully spam crazy offers of 1000x returns, filled with grammatical errors to thousands of people a day. 
+Think the Nigerian prince scam, the scams are formatted in a way to repel technically savvy, and well off people. The goal is to catch an older crowd, with unreasonable expectations, and desperation.
+
+![image](https://i.imgur.com/pEXIEQB.jpeg)
+
+These scammers typically rely on convincing the victim to give access to valuable accounts, or send funds directly willingly. 
+Early in 2023, my friend had made a twitter/x post about his birthday coming soon. I know him IRL he's a huge BTC maxi, so I commented I'd send him some BTC. That day a twitter account was created, a blue checkmark purchased, and this fake account began retweeting everything on my friend's timeline.
+On the day of my friend's birthday, he had sent me a DM with his BTC address, I had recently woken up, and after a quick glance at his profile, I sent him 100$ in BTC. Turns out, it's a scammer. 
+
+
+## Employment scams:
+
+Some scams are more sophisticated, and insidious. They require proper identification of prospects, story arcs, reasonable returns, and technical tooling to take a lot, from a few people.
+These scams rely on looking as **legit as possible**, they have well designed websites, proper marketing, social media accounts with blue checkmarks, a high follower count, and seemingly decent social validation.
+Today we will be breaking down the **social, and technical implementations of employment scams in a Web3 context**. Here the scammers **lure you into installing executables, or signing transactions**, your seemingly innocent action will trigger a series of event in which your entire portfolio will be drained, and sent to the scammers.
+
+### Part 1: Prospect identification
+
+In Web3, (almost) all transactions are public, a lot of people own ENS domains and share them on their socials, ENS assigns a human readable text to ethereum addresses. 
+
+#### Example of an ENS:
+
+![image](https://hackmd.io/_uploads/Sy_9qDtJ0.png)
+
+This will allow a malicious actor to follow my ENS and view all my holdings, **if I have a cetain amount of funds, say more than 10k USD I will be marked as a target.**
+An organised operation of scammers will find dozens, of targets, and mark them down in a spreadsheet somewhere. Along with their social usernames, professions, and any information that could help in establishing a relationship with the target.
+
+### Part 2: Human connection as bait
+
+Once a list of prospects is established, a group of chatters will begin to send friend requests, follow, and DM the targets. The goal is to create a connection, establish a friendship.
+
+#### Example of DMs from scammer:
+
+![image](https://hackmd.io/_uploads/BkwXZ_YJA.png)
+
+0xEddy (on the left) began messaging with a target, doing introductions, and bonding with the lead. Once a connection is built, a job opportunity will be offered, a few more individuals will jump in, have calls, and convince the prospect this is a valid job opportunity.
+
+![image](https://hackmd.io/_uploads/r1QjW_KkC.png)
+![image](https://hackmd.io/_uploads/SJW3-_Y10.png)
+
+### Step 3: Do you want the job?
+
+Now that the stage is ready, and the victim is convinced this will lead to a job, the scammers will connect the last piece of the puzzle:
+"Install our software/connect to our site/clone and run this repository to familiarize yourself with our workspace, and prove you can do this job"
+
+At this point, the victim has 1 of 2 choices, take the bait for the work opportunity, or reject it which lead to hours of wasted time, and harsh aggressive treatment from the scammers.
+
+![image](https://hackmd.io/_uploads/Hks_B_Y1C.png)
+
+### Step 4: Get drained
+
+**In the case of SpectraChat/SpectraSocial:**
+
+#### Installation:
+
+1. The malware is a .exe installer which will install a folder of c++ files to the local machine in a folder called /Spectra.
+2. The malware will also copy the installer, rename it, and move it into some random folder, so that when you delete it, it will reinstall itself.
+3. Once installed, it will error out "C++ Drivers missing", this is meant as a signal for the hackers, as it will push you to message them.
+4. Because you're installing an installer, and not the malware itself, Windows defender fails to alert you that there is an issue.
+
+#### Behaviours:
+
+1. The software will hijack your browser, detect your browser plugins crypto wallets, and either:
+    - Allow the scammers to control your browser remotely (in this case this is the most likely exploit)
+    - It will run automated commands to your browser to sell and transfer all the assets out of your wallets.
+
+2. Additionally, this malware hijacks copy/paste mechanisms **within** the browser, when you try to copy a hex string starting with 0x, it will replace it with the scammers wallet. This issue wasn't occuring outside the browser, which hints towards this whole malware chromium browsers specifically.
+   - This is done to prevent the victim from stopping the attack by transferring whatever remains to another wallet
+   - It is done to continue leeching funds off the client, in the case that they don't realise their browser is still hijacked. In fact the wallet address pasted by the malware had more incoming transfers then the wallets used by the drainer.
+
+3. Deleting the software seemed very difficult, as it would reinstall itself, and the fact that windows relies on the apps having a provided uninstaller.
+
+#### What this malware doesn't do:
+
+1. As an expirement we left a seed phrase, and secret key in a note on the desktop, the wallet had a decent bit of money, and we were monitoring to see if it would be taken.
+    - The malware had not picked up on this, leading us to believe that the malware doesn't take control of the host device, just the browser.
+2. Escape virtual machines: we installed the executable on a linux VM, and ran it with Wine. It didn't seem to do anything, and it never effected the host machine's Windows OS
+3. Infect the network: we monitored the network traffic, no other machines were affected, and there was not suspicious activity.
+
+### Conclusion
+
+Despite the sophisticated tactics employed by scammers, there are steps individuals can take to protect themselves:
+
+- Avoid installing unknown executable files.
+- Exercise caution and skepticism when presented with enticing offers.
+- Implement security measures such as multi-factor authentication.
+- Verify the legitimacy of job opportunities and websites.
+
+By staying vigilant and informed, individuals can mitigate the risks posed by modern scams and protect their financial assets.
+I want to extend my gratitude to [Alex](https://twitter.com/Alexwashere) for bravely sharing his experience, highlighting the importance of awareness and caution in today's digital landscape.
+If more people shared their experiences, we would realize that anyone can fall victim to scams, emphasizing the need for collective vigilance.
+
+If you want to read more about this scam, I can't recommend a better breakdown than: [Alex's blog post](https://alexhalloran.substack.com/p/from-casual-networking-to-crypto)
