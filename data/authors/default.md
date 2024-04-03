@@ -4,7 +4,7 @@ avatar: /static/images/avatar.png
 occupation: Web3 Software Engineer
 company: Serotonin Designs
 email: admin@serotonindesigns.com
-twitter: https://twitter.com/seroxdesigns
+twitter: https://twitter.com/0x_Sero
 linkedin: https://www.linkedin.com/in/sero-346b85202/
 github: https://github.com/seroxdesign
 ---
