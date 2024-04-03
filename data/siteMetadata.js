@@ -13,7 +13,7 @@ const siteMetadata = {
   socialBanner: '/static/images/site.png',
   email: 'admin@serotonindesigns.com',
   github: 'https://github.com/seroxdesign',
-  twitter: 'https://twitter.com/seroxdesigns',
+  twitter: 'https://twitter.com/0x_Sero',
   youtube: 'https://www.youtube.com/c/SerotoninExperience',
   linkedin: 'https://www.linkedin.com/in/sero-346b85202/',
   locale: 'en-US',
