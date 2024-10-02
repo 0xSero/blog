@@ -9,8 +9,8 @@ linkedin: https://www.linkedin.com/in/sero-346b85202/
 github: https://github.com/seroxdesign
 ---
 
-I am a Web-3 Software Engineer, podcaster and writer with a working presence in the United States, United Kingdom and Poland. I've had experience working on launching startups, upgrading existing web infrastructure and consulting for Public-Private-relation and social impact organizations.
+I am a proud father, Software Engineer, writer, and podcaster. I'm deeply invested in the web3 space, open source, and freedom technology.
 
-I also work with online creators to help protect their public image by removing stolen content, doxxed information and fake accounts from search engines, social media applications and malicious websites.
+I work with online creators to help protect their public image by removing stolen content, doxxed information and fake accounts from search engines, social media applications and malicious websites.
 
-When I'm not working on projects I like to educate myself on computer science and blockchain technology, hosting local meetups, working out, and spending time with my family.
+When I'm not working on projects I like to read books, host local meetups, working out, and spending time with my family.

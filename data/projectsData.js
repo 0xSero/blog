@@ -1,27 +1,30 @@
 const projectsData = [
   {
     title: 'Ethereum Foundation - PSE',
-    description: 'Research and Development grantee, focused on ZK-protocols and next billion efforts.',
-    imgSrc: '/static/images/Logo-white.png',
-    href: 'https://ethereum.foundation/'
+    description:
+      'Research and Development grantee, focused on ZK-protocols and next billion efforts.',
+    imgSrc: '/static/images/ef.png',
+    href: 'https://ethereum.foundation/',
   },
   {
     title: 'Ethers Club (formerly Decentra Talks)',
     description: `Join me in my journey talking to incredible people.`,
-    imgSrc: '/static/images/decentra-talks.png',
+    imgSrc: '/static/images/EthersClub.png',
     href: 'https://podcast.ethers.club',
   },
   {
     title: 'Gitcoin',
-    description: 'Research and Development for cross chain donations, and LTIP a new grant mechanism.',
-    imgSrc: '/static/images/Logo-white.png',
-    href: 'https://gitcoin.co'
+    description:
+      'Research and Development for cross chain donations, and LTIP a new grant mechanism.',
+    imgSrc: '/static/images/gitcoin.png',
+    href: 'https://gitcoin.co',
   },
   {
     title: 'POKT Network',
-    description: 'Website development and modernisation, CMS development, data migration, research.',
-    imgSrc: '/static/images/Logo-white.png',
-    href: 'https://pokt.network'
+    description:
+      'Website development and modernisation, CMS development, data migration, research.',
+    imgSrc: '/static/images/pokt.jpg',
+    href: 'https://pokt.network',
   },
   {
     title: 'Synpress',
@@ -41,7 +44,7 @@ const projectsData = [
     imgSrc: '/static/images/tellor.png',
     href: 'https://fundafeed.herokuapp.com/',
   },
-    {
+  {
     title: 'Alluo Finance',
     description: `DCA and earn yield while you Hodl your crypto, in our trustless and decentralised dApp.`,
     imgSrc: '/static/images/alluo.jpg',

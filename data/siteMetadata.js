@@ -1,18 +1,17 @@
 const siteMetadata = {
-  title: 'Serotonin Designs',
+  title: 'Ethers Club',
   author: 'Sero',
-  headerTitle: 'Serotonin Designs',
-  description:
-    'Join me on this journey to learn more about technology, computers and decentralised work.',
+  headerTitle: 'Ethers Club',
+  description: 'You found me.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://blog.serotonindesigns.com',
-  siteRepo: 'https://github.com/seroxdesign',
+  siteUrl: 'https://blog.ethers.club',
+  siteRepo: 'https://github.com/Seroxdesign',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/site.png',
   socialBanner: '/static/images/site.png',
   email: 'admin@serotonindesigns.com',
-  github: 'https://github.com/seroxdesign',
+  github: 'https://github.com/Seroxdesign',
   twitter: 'https://twitter.com/0x_Sero',
   youtube: 'https://www.youtube.com/c/SerotoninExperience',
   linkedin: 'https://www.linkedin.com/in/sero-346b85202/',
@@ -24,7 +23,7 @@ const siteMetadata = {
     plausibleDataDomain: '', // e.g. tailwind-nextjs-starter-blog.vercel.app
     simpleAnalytics: false, // true or false
     umamiWebsiteId: '', // e.g. 123e4567-e89b-12d3-a456-426614174000
-    googleAnalyticsId: '', // e.g. UA-000000-2 or G-XXXXXXX
+    googleAnalyticsId: 'G-0LRP2GK802', // e.g. UA-000000-2 or G-XXXXXXX
     posthogAnalyticsId: '', // posthog.init e.g. phc_5yXvArzvRdqtZIsHkEm3Fkkhm3d0bEYUXCaFISzqPSQ
   },
   newsletter: {

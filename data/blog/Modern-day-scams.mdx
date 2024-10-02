@@ -1,5 +1,5 @@
 ---
-title: 'A modern day scam'
+title: 'Employment Scams - Deep Dive'
 date: '04 / 03 / 2024'
 tags: ['Security', 'Privacy', 'Blockchain', 'Cryptocurrency']
 draft: false
@@ -13,15 +13,14 @@ You could be opening a **work email**, and compromise your company. You can wake
 
 ### Phishing scams:
 
-It is well known that unsophisticated scammers and hackers purposefully spam crazy offers of 1000x returns, filled with grammatical errors to thousands of people a day. 
+It is well known that unsophisticated scammers and hackers purposefully spam crazy offers of 1000x returns, filled with grammatical errors to thousands of people a day.
 Think the Nigerian prince scam, the scams are formatted in a way to repel technically savvy, and well off people. The goal is to catch an older crowd, with unreasonable expectations, and desperation.
 
 ![image](https://i.imgur.com/pEXIEQB.jpeg)
 
-These scammers typically rely on convincing the victim to give access to valuable accounts, or send funds directly willingly. 
+These scammers typically rely on convincing the victim to give access to valuable accounts, or send funds directly willingly.
 Early in 2023, my friend had made a twitter/x post about his birthday coming soon. I know him IRL he's a huge BTC maxi, so I commented I'd send him some BTC. That day a twitter account was created, a blue checkmark purchased, and this fake account began retweeting everything on my friend's timeline.
-On the day of my friend's birthday, he had sent me a DM with his BTC address, I had recently woken up, and after a quick glance at his profile, I sent him 100$ in BTC. Turns out, it's a scammer. 
-
+On the day of my friend's birthday, he had sent me a DM with his BTC address, I had recently woken up, and after a quick glance at his profile, I sent him 100$ in BTC. Turns out, it's a scammer.
 
 ## Employment scams:
 
@@ -31,7 +30,7 @@ Today we will be breaking down the **social, and technical implementations of em
 
 ### Part 1: Prospect identification
 
-In Web3, (almost) all transactions are public, a lot of people own ENS domains and share them on their socials, ENS assigns a human readable text to ethereum addresses. 
+In Web3, (almost) all transactions are public, a lot of people own ENS domains and share them on their socials, ENS assigns a human readable text to ethereum addresses.
 
 #### Example of an ENS:
 
@@ -76,10 +75,12 @@ At this point, the victim has 1 of 2 choices, take the bait for the work opportu
 #### Behaviours:
 
 1. The software will hijack your browser, detect your browser plugins crypto wallets, and either:
-    - Allow the scammers to control your browser remotely (in this case this is the most likely exploit)
-    - It will run automated commands to your browser to sell and transfer all the assets out of your wallets.
+
+   - Allow the scammers to control your browser remotely (in this case this is the most likely exploit)
+   - It will run automated commands to your browser to sell and transfer all the assets out of your wallets.
 
 2. Additionally, this malware hijacks copy/paste mechanisms **within** the browser, when you try to copy a hex string starting with 0x, it will replace it with the scammers wallet. This issue wasn't occuring outside the browser, which hints towards this whole malware chromium browsers specifically.
+
    - This is done to prevent the victim from stopping the attack by transferring whatever remains to another wallet
    - It is done to continue leeching funds off the client, in the case that they don't realise their browser is still hijacked. In fact the wallet address pasted by the malware had more incoming transfers then the wallets used by the drainer.
 
@@ -88,7 +89,7 @@ At this point, the victim has 1 of 2 choices, take the bait for the work opportu
 #### What this malware doesn't do:
 
 1. As an expirement we left a seed phrase, and secret key in a note on the desktop, the wallet had a decent bit of money, and we were monitoring to see if it would be taken.
-    - The malware had not picked up on this, leading us to believe that the malware doesn't take control of the host device, just the browser.
+   - The malware had not picked up on this, leading us to believe that the malware doesn't take control of the host device, just the browser.
 2. Escape virtual machines: we installed the executable on a linux VM, and ran it with Wine. It didn't seem to do anything, and it never effected the host machine's Windows OS
 3. Infect the network: we monitored the network traffic, no other machines were affected, and there was not suspicious activity.
 
