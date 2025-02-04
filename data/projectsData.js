@@ -1,5 +1,18 @@
 const projectsData = [
   {
+    title: 'ZKSync - Governance RSS',
+    description:
+      'A monitor for on-chain governance activity, which turns events to RSS items.',
+    imgSrc: '/static/images/zksync.png',
+    href: 'https://feed.zknation.io/',
+  },
+  {
+    title: 'ElizaOS',
+    description: `Contributor to the leading Open Source AI agent framework`,
+    imgSrc: '/static/images/elizaos.png',
+    href: 'https://www.elizaos.ai/',
+  },
+  {
     title: 'Ethereum Foundation - PSE',
     description:
       'Research and Development grantee, focused on ZK-protocols and next billion efforts.',
