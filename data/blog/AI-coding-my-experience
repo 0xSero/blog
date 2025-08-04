@@ -1,0 +1,508 @@
+---
+title: 'Programming with AI'
+date: '04 / 08 / 2025'
+tags: ['AI', 'Development', 'Guide', 'Workflow']
+draft: false
+summary: 'AI assisted development is not the same as vibe coding, here's why'
+---
+
+# Advanced Guide: Maximizing AI Coding Efficiency with Cursor & Claude Code
+
+## Introduction
+
+I genuinely believe the future of programming isn't about writing code line by line anymore it's about communicating clearly and efficiently with AI. We're entering a world where the cost of a re-prompt is *far* cheaper than the cost of manually writing thousands of lines of code. And if you're still optimizing for lines typed rather than ideas executed, you're already behind.
+
+Of course, there's pushback. You'll hear it from great developers smart, seasoned people who are damn good at what they do. But let’s be honest: most of it isn’t about the tech. It's about self-preservation.
+
+Here are the usual complaints, and why I don’t buy them:
+
+1. “It’s not good.”
+   Translation: “I don’t understand how it works and my expectations are based on marketing fluff or failed one-shot prompts.” If you don't know how to speak the language of these models, of course you're going to get garbage out.
+2. “It makes you worse. It’s not a real skill.”
+   This one always smells like fear. Of course they’ll say prompt engineering or AI-assisted workflows aren't real skills because they don’t have those skills yet. But knowing how to direct intelligence (whether human or machine) is one of the most powerful skills in any domain.
+3. “It’s expensive.”
+   Only if you're using it wrong. Most people don’t know how to manage context windows, cache outputs, or chain calls efficiently. Cost is a solvable problem it just requires some operational maturity.
+4. “It takes longer than writing it myself.”
+   No, it doesn’t. You’re either delusional, or you're spending 45 minutes arguing with ChatGPT instead of giving it clear, structured instructions.
+5. “It introduces security issues or is unmanageable at scale.”
+   This one’s half-legit, but it’s still mostly ignorance. Don’t paste secrets into your prompts. Don’t expose your .env files. Use tools like git properly. These aren't new problems.
+If you can’t beat it, join it. Because what we're building is the beginning of a new kind of developer. The ones who *orchestrate* intelligence.
+
+![image](https://pbs.twimg.com/media/GqMYXHxXoAAl9bR.jpg)
+
+## Understanding AI Coding Assistant Context Windows
+
+The "context window" refers to how much text or code an AI model can consider when generating responses. Optimizing this context is critical for getting high-quality code generation.
+
+### Cursor Context Window Optimization
+
+Cursor uses different AI models with varying context window sizes:
+
+![image](https://pbs.twimg.com/media/GqMYcEiWcAAKT0n?format=jpg&name=large)
+
+Claude 4's Max mode offers the full 200k context window but costs $0.05 per prompt and an additional $0.05 per tool call. Standard mode with a 48K token window is sufficient for most individual file edits, while Max mode should be reserved for large codebases or complex multi-file operations.
+
+### Claude Code Context Window Optimization
+
+Claude Code uses Claude 4 Sonnet by default, allowing it to automatically explore your codebase as needed. Unlike Cursor, where you must explicitly add files to context, Claude Code's agentic capabilities let it autonomously navigate your project structure.
+
+### Ideal File Size Guidelines
+
+Based on research and practical experience with AI coding assistants:
+
+```mermaid
+graph TD
+    A[File Size Guidelines] --> B[Small Files]
+    A --> C[Medium Files]
+    A --> D[Large Files]
+    
+    B --> B1[< 200 lines]
+    B --> B2[Ideal for complete rewrites]
+    B --> B3[1.5K-2K tokens]
+    
+    C --> C1[200-500 lines]
+    C --> C2[Good for partial edits]
+    C --> C3[2K-4K tokens]
+    
+    D --> D1[> 500 lines]
+    D --> D2[Split into modules]
+    D --> D3[Too large for single context]
+    
+    style A fill:#e5f5ff,stroke:#333,stroke-width:2px
+    style B,C,D fill:#f0f8ff,stroke:#333,stroke-width:1px
+```
+
+For context, a typical React JSX file of 200 lines contains about 1,500 tokens, while a 200-line Python file is around 1,700 tokens. For optimal results:
+
+- Keep individual files under 400 lines of code when possible
+- Break larger files into modules with clear responsibilities
+- Consider that complex files with many imports, classes, or functions may consume tokens more rapidly
+
+## Advanced Cursor Optimization Techniques
+
+### Smart Context Management
+
+A highly effective strategy is to close all editor tabs first, then open only the most relevant files before adding them all to context using the "Reference Open Editors" command through the slash (/) menu.
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Cursor as Cursor
+    participant AI as AI Model
+    
+    Dev->>Cursor: Close all open tabs
+    Dev->>Cursor: Open only relevant files
+    Dev->>Cursor: Type / in prompt
+    Cursor->>Dev: Show command menu
+    Dev->>Cursor: Select "Reference Open Editors"
+    Cursor->>AI: Add all open files to context
+    Dev->>Cursor: Add prompt with specific task
+    Cursor->>AI: Process with complete context
+    AI->>Cursor: Generate response
+    Cursor->>Dev: Display results
+```
+
+When dealing with large codebases, use these additional techniques:
+
+1. Create a separate docs folder specifically teaching the AI best practices for common tasks in your codebase
+2. Use the @Commit (Diff of Working State) command to add current uncommitted changes to the context
+3. Utilize @Web to search for up-to-date information and documentation
+
+### Optimal Prompting Strategies
+
+Craft prompts that are specific and contextual, clearly articulating your requirements, including specific libraries, frameworks, or constraints. This helps the AI understand and generate code that aligns closely with your needs.
+
+Example of a well-structured prompt:
+
+```
+Update the user authentication system in UserAuth.js to:
+1. Use the latest version of Firebase Auth (v10.1)
+2. Implement password reset functionality
+3. Add email verification
+4. Follow our established error handling pattern from ErrorUtils.js
+5. Make sure it's compatible with our React 18 setup
+```
+
+### Using .cursorrules Effectively
+
+.cursorrules files provide specific project rules that Cursor AI will follow when generating code. These are powerful for maintaining consistency in your codebase.
+
+Example .cursorrules file for a React project:
+
+```
+UI and Styling:
+- Use Shadcn UI and Tailwind for components and styling
+- Implement mobile-first responsive design
+- Prefer function components over class components
+- Use CSS modules for component-specific styles
+
+Performance:
+- Minimize 'use client' directives
+- Favor React Server Components
+- Wrap client components in Suspense with fallback
+- Use dynamic loading for non-critical components
+- Optimize images with next/image
+
+Architecture:
+- Use the repository pattern for data access
+- Implement clean architecture with clear separation of concerns
+- Keep components under 150 lines
+- Extract complex logic to custom hooks
+```
+
+### Leveraging Agent Mode
+
+Agent mode (accessible via cmd + I or using the dropdown) will continuously call Claude until the goal has been achieved, searching files, gathering more context, running tests, and installing packages as needed. This is especially powerful for complex tasks involving multiple files.
+
+For maximum efficiency:
+
+1. Enable "Yolo mode" in settings to allow Cursor to run tests without asking for confirmation
+2. Create a new agent window periodically as longer conversations can cause Claude to forget earlier instructions
+3. Use specific phrases like "think hard" to trigger extended thinking for complex problems
+
+### Notepads for Project Context
+
+Use Cursor's Notepad feature to explain features in plain text and mention particular files that can then be referenced in your prompts. This approach provides persistent context without having to repeatedly add the same files.
+
+You can also use notepads to save frequently used prompts, like code review templates or vulnerability search patterns.
+
+### Advanced @Commands
+
+Cursor offers several powerful @ commands to enhance context:
+
+```mermaid
+mindmap
+  root((@Commands))
+    @Files
+      Include specific files
+      Path autocompletion
+      Multiple file selection
+    @Folders
+      Include entire directories
+      Useful for feature context
+    @Code
+      Reference specific code sections
+      Can be combined with selection (cmd+L)
+    @Web
+      Search the internet
+      Add documentation
+    @Commit
+      Add uncommitted changes
+      See working diff
+```
+
+## Claude Code Command Line Mastery
+
+### Effective Agentic Workflows
+
+Claude Code operates directly in your terminal, understanding your project context and taking real actions with no need to manually add files to context. It can explore your codebase as needed, performing operations like editing files and creating commits.
+
+For optimal workflows:
+
+1. First tell Claude about your task and let it gather context from your project
+2. Ask it to "think" to create a plan before execution 
+3. Provide feedback on the plan before implementation
+4. Use the `/clear` command between distinct tasks
+
+### Extended Thinking Mode
+
+Using specific phrases triggers different levels of extended thinking in Claude Code:
+
+```mermaid
+graph LR
+    A["think"] --> B["think hard"] --> C["think harder"] --> D["ultrathink"]
+    
+    style A fill:#d1e7dd,stroke:#333,stroke-width:1px
+    style B fill:#d1e7dd,stroke:#333,stroke-width:1px
+    style C fill:#d8d8d8,stroke:#333,stroke-width:1px
+    style D fill:#d8d8d8,stroke:#333,stroke-width:1px
+```
+
+Each level allocates progressively more thinking budget, allowing Claude to evaluate alternatives more thoroughly before taking action.
+
+### Context Window Management
+
+During long sessions, Claude's context window can fill with irrelevant conversation, file contents, and commands, which can reduce performance and sometimes distract Claude. Use the `/clear` command frequently between tasks to reset the context window.
+
+### Subagent Utilization
+
+For complex problems, consider strong use of subagents, especially early in a conversation or task. Tell Claude to use subagents to verify details or investigate particular questions, which helps preserve context availability without sacrificing efficiency.
+
+## AI-Optimized Programming Patterns
+
+### Modular Architecture for AI Collaboration
+
+Structuring your code with AI collaboration in mind can dramatically improve the quality and speed of AI-assisted development. Consider these architectural patterns:
+
+```mermaid
+graph TD
+    A[AI-Optimized Architecture] --> B[Microservices]
+    A --> C[Layered Architecture]
+    A --> D[Hexagonal/Clean Architecture]
+    
+    B --> B1[Small, focused services]
+    B --> B2[Clear API boundaries]
+    B --> B3[Independent deployment]
+    
+    C --> C1[Distinct presentation layer]
+    C --> C2[Separated business logic]
+    C --> C3[Isolated data access]
+    
+    D --> D1[Domain-centric design]
+    D --> D2[Framework independence]
+    D --> D3[Isolation of external dependencies]
+    
+    style A fill:#e5f5ff,stroke:#333,stroke-width:2px
+    style B,C,D fill:#f0f8ff,stroke:#333,stroke-width:1px
+```
+
+Implementing uniform coding patterns through development guidelines in your Cursor configuration helps maintain consistency across your codebase and enables better AI suggestions.
+
+### File Structure Optimization
+
+Organize your project files to maximize AI comprehension:
+
+1. Include your PRD (Product Requirements Document) as a Markdown file in your repository (e.g., docs/PRD.md) to give the AI a source of truth about your product's goals
+2. Use clear, descriptive file and directory names
+3. Keep related files close together in the directory structure
+4. Use .cursorignore to skip large files the AI should ignore (e.g., big data files or libraries)
+
+### Documentation Design for AI Understanding
+
+Make context work for you by putting PRDs and specs where Cursor can see them and reference them in your prompts. Add special documentation files specifically for AI:
+
+```
+/docs
+  /ai
+    architecture.md        # System architecture explanation
+    coding-standards.md    # Project-specific coding standards
+    component-patterns.md  # Reusable UI component patterns
+    state-management.md    # State management approach
+    api-conventions.md     # API structure and naming conventions
+    testing-strategy.md    # Testing approaches and patterns
+```
+
+### Test-Driven Development with AI
+
+AI coding assistants excel at generating tests, making TDD particularly effective:
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant AI as AI Assistant
+    participant Code as Codebase
+    
+    Dev->>AI: Request test cases for feature
+    AI->>Dev: Generate test suite
+    Dev->>Code: Implement tests
+    Dev->>AI: Request implementation to pass tests
+    AI->>Dev: Generate implementation
+    Dev->>Code: Integrate and run tests
+    Code->>Dev: Test results
+    Dev->>AI: Request fixes for failing tests
+    AI->>Dev: Provide optimized solution
+    Dev->>Code: Final implementation
+```
+
+Claude Code is particularly effective for test-driven development, debugging complex issues, and large-scale refactoring.
+
+### Project Templates for Maximum AI Efficiency
+
+Create project templates designed for optimal AI collaboration:
+
+1. Include well-structured .cursorrules files
+2. Provide clear README.md with project context
+3. Add AI-specific documentation in /docs/ai
+4. Implement a coherent file structure with consistent naming
+5. Include example implementations of key patterns
+
+## Advanced AI-Assisted Development Workflows
+
+Four key design patterns—Reflection, Tool Use, Planning, and Multiagent—form the foundation of advanced agentic workflows. These patterns enable AI systems to behave more independently and effectively, enhancing your coding process.
+
+### Reflection Pattern
+
+```mermaid
+graph TD
+    A[Reflection Pattern] --> B[AI generates initial solution]
+    B --> C[AI self-evaluates code]
+    C --> D[AI identifies improvements]
+    D --> E[AI refines solution]
+    E --> C
+    
+    style A fill:#e5f5ff,stroke:#333,stroke-width:2px
+    style B,C,D,E fill:#f0f8ff,stroke:#333,stroke-width:1px
+```
+
+The Reflection Pattern enhances AI's ability to self-evaluate and refine its output by repeatedly reviewing its own work, identifying errors, gaps, or areas for improvement.
+
+Implementation in Cursor:
+1. Ask the AI to generate a solution
+2. Request it to review and critique its own code
+3. Ask it to refine based on its own critique
+4. Repeat until satisfied with the quality
+
+### Tool Use Pattern
+
+The Tool Use Pattern expands an AI's capabilities by allowing it to interact with external tools and resources, accessing databases, performing web searches, or executing functions.
+
+In Cursor, implement this pattern by:
+1. Enabling Agent mode
+2. Setting appropriate permissions for tool access
+3. Giving clear instructions about which tools to use
+4. Letting the AI execute terminal commands when needed
+
+### Planning Pattern
+
+Before diving into implementation, have the AI create a detailed plan:
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant AI as AI Assistant
+    
+    Dev->>AI: Describe feature requirements
+    AI->>AI: Think hard about approach
+    AI->>Dev: Present implementation plan
+    Dev->>AI: Provide feedback on plan
+    AI->>AI: Revise plan
+    AI->>Dev: Present final plan
+    Dev->>AI: Approve plan
+    AI->>Dev: Implement feature step by step
+```
+
+This pattern works particularly well with the "think hard" directive in Claude Code or Agent mode in Cursor.
+
+### Multiagent Pattern
+
+Using subagents to verify details or investigate particular questions helps preserve context availability without reducing efficiency. You can implement a multiagent approach by:
+
+1. Defining specialized roles for different aspects of the task
+2. Having the primary AI delegate specific subtasks to "virtual" subagents
+3. Integrating the results back into the main solution
+
+## Skill Preservation Techniques
+
+While leveraging AI for maximum efficiency, it's crucial to maintain and develop your coding skills.
+
+### Deliberate Manual Coding Practices
+
+```mermaid
+graph TD
+    A[Deliberate Practice] --> B[Schedule manual coding sessions]
+    A --> C[Implement core algorithms without AI]
+    A --> D[Code reviews of AI-generated code]
+    A --> E[Refactor AI code manually]
+    A --> F[Solve coding challenges without AI]
+    
+    style A fill:#e5f5ff,stroke:#333,stroke-width:2px
+    style B,C,D,E,F fill:#f0f8ff,stroke:#333,stroke-width:1px
+```
+
+Regular unassisted coding keeps your skills sharp. Set aside dedicated time for coding without AI assistance, focusing on algorithms, data structures, and system design.
+
+### Active Learning Principles
+
+Validate and review generated code before integration into the project. Manual code reviews and testing should remain fundamental to the development process.
+
+When using AI-generated code:
+1. Understand every line before accepting it
+2. Ask the AI to explain complex sections
+3. Modify the code manually to ensure understanding
+4. Look for edge cases the AI might have missed
+5. Implement critical security and performance logic yourself
+
+### Skill Assessment Framework
+
+Periodically evaluate your coding abilities without AI assistance:
+
+```mermaid
+stateDiagram-v2
+    [*] --> SetBaseline
+    SetBaseline --> RegularChallenges
+    RegularChallenges --> AdjustStrategy
+    AdjustStrategy --> TargetedPractice
+    TargetedPractice --> RegularChallenges
+    RegularChallenges --> [*]
+    
+    state SetBaseline {
+        [*] --> IdentifyKeySkills
+        IdentifyKeySkills --> CompleteAssessment
+        CompleteAssessment --> DocumentResults
+        DocumentResults --> [*]
+    }
+    
+    state RegularChallenges {
+        [*] --> ImplementFeature
+        ImplementFeature --> SolveAlgorithm
+        SolveAlgorithm --> DebuggingTask
+        DebuggingTask --> [*]
+    }
+```
+
+Track your progress by:
+1. Setting a baseline of skills
+2. Regularly completing coding challenges without AI
+3. Identifying areas where your skills need improvement
+4. Creating a targeted practice plan for those areas
+5. Reassessing periodically to measure growth
+
+## Case Studies: Optimized AI Coding Workflows
+
+### Frontend Development with React
+
+```mermaid
+graph TD
+    A[Frontend Workflow] --> B[Project Setup]
+    B --> C[Component Structure Design]
+    C --> D[UI Implementation]
+    D --> E[State Management]
+    E --> F[API Integration]
+    F --> G[Testing]
+    
+    B1[AI: Generate project scaffold] -.-> B
+    C1[Manual: Design component hierarchy] -.-> C
+    D1[AI: Generate component code] -.-> D
+    D2[Manual: Style refinement] -.-> D
+    E1[AI: Implement state logic] -.-> E
+    F1[Manual: Design API integrations] -.-> F
+    F2[AI: Implement API calls] -.-> F
+    G1[AI: Generate test cases] -.-> G
+    G2[Manual: Test edge cases] -.-> G
+    
+    style A fill:#e5f5ff,stroke:#333,stroke-width:2px
+    style B,C,D,E,F,G fill:#f0f8ff,stroke:#333,stroke-width:1px
+```
+
+1. **Project Setup**: Use AI to generate the project scaffold following your preferred structure
+2. **Component Design**: Manually design the component hierarchy and responsibilities
+3. **UI Implementation**: Let AI generate component code, manually refine styling and interactions
+4. **State Management**: Use AI to implement state logic based on your chosen approach
+5. **API Integration**: Manually design API integrations, use AI to implement the actual calls
+6. **Testing**: Let AI generate test cases, manually add edge cases and complex scenarios
+
+### Backend API Development
+
+1. **Schema Design**: Manually design data models and relationships
+2. **API Structure**: Use AI to generate OpenAPI/Swagger specifications
+3. **Implementation**: Alternate between AI-generated code and manual implementation
+4. **Validation**: Manually implement validation logic, have AI generate test cases
+5. **Documentation**: Use AI to generate comprehensive API documentation
+
+### Full Stack Application
+
+For full-stack applications, use a strategic division of labor:
+
+1. **Architecture**: Manually design the overall architecture and system boundaries
+2. **Backend**: Use AI for database schema generation and standard CRUD operations
+3. **Frontend**: Use AI for component scaffolding, manually implement business-critical UI
+4. **Integration**: Manually implement the integration points between systems
+5. **Testing**: Use AI to generate unit tests, manually design integration and E2E tests
+
+## Conclusion
+
+AI-assisted coding with tools like Cursor and Claude Code represents a transformative approach to software development. By implementing the advanced techniques in this guide, you can maximize efficiency while ensuring your fundamental coding skills continue to grow.
+
+Remember that AI should enhance your capabilities, not replace them. The most successful developers will be those who leverage AI strategically, using it to handle routine tasks while focusing their expertise on high-value problems that require human creativity and judgment.
+
+As these tools continue to evolve, maintain a balanced approach that embraces their productivity benefits while preserving your coding skills through deliberate practice and active learning.
