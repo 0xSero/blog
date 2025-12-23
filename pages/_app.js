@@ -1,4 +1,4 @@
-import '@/css/tailwind.css'
+import '@/styles/index.css'
 import '@/css/prism.css'
 import 'katex/dist/katex.css'
 
@@ -16,16 +16,17 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 const isSocket = process.env.SOCKET
 
 export default function App({ Component, pageProps }) {
+  // Use per-page layout if defined, otherwise use default LayoutWrapper
+  const getLayout = Component.getLayout || ((page) => <LayoutWrapper>{page}</LayoutWrapper>)
+
   return (
-    <ThemeProvider attribute="class" defaultTheme={siteMetadata.theme}>
+    <ThemeProvider attribute="class" defaultTheme={siteMetadata.theme} forcedTheme="dark">
       <Head>
         <meta content="width=device-width, initial-scale=1" name="viewport" />
       </Head>
       {isDevelopment && isSocket && <ClientReload />}
       <Analytics />
-      <LayoutWrapper>
-        <Component {...pageProps} />
-      </LayoutWrapper>
+      {getLayout(<Component {...pageProps} />)}
     </ThemeProvider>
   )
 }

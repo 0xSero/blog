@@ -1,0 +1,165 @@
+/* ============================================
+   JAPANESE MINIMALISM - No-Card Aesthetic
+   Generous whitespace, subtle dividers, asymmetric layouts
+   ============================================ */
+
+/* ============================================
+   DIVIDERS - Subtle, understated separations
+   ============================================ */
+.divider-subtle {
+  height: 1px;
+  background: var(--color-border-subtle);
+  margin: var(--space-2xl) 0;
+}
+
+.divider-vertical {
+  width: 1px;
+  height: 100%;
+  background: var(--color-border-subtle);
+}
+
+/* Asymmetric divider - Japanese aesthetic touch */
+.divider-asymmetric {
+  position: relative;
+  padding-bottom: var(--space-xl);
+}
+
+.divider-asymmetric::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(to right, var(--color-border-subtle), transparent);
+}
+
+/* ============================================
+     SURFACES - Minimal, borderless containers
+     ============================================ */
+
+/* No-card: removes all card styling */
+.surface-minimal {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Subtle surface with very light border */
+.surface-subtle {
+  border: 1px solid var(--color-border-subtle);
+  padding: var(--space-lg);
+  transition: border-color var(--duration-normal) var(--ease-default);
+}
+
+.surface-subtle:hover {
+  border-color: var(--color-border-default);
+}
+
+/* Elevated surface - for when you need slight distinction */
+.surface-float {
+  background: var(--color-surface-elevated);
+  border: 1px solid transparent;
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.surface-float:hover {
+  border-color: var(--color-border-subtle);
+}
+
+/* ============================================
+     SPACING - Generous "breathing room"
+     ============================================ */
+
+.section-breathe {
+  padding: var(--space-section-md) 0;
+}
+
+@media (min-width: 768px) {
+  .section-breathe {
+    padding: var(--space-section-lg) 0;
+  }
+}
+
+/* Asymmetric padding */
+.asymmetric-sm {
+  padding-left: var(--space-md);
+  padding-right: var(--space-2xl);
+}
+
+.asymmetric-md {
+  padding-left: var(--space-lg);
+  padding-right: var(--space-3xl);
+}
+
+.asymmetric-lg {
+  padding-left: var(--space-xl);
+  padding-right: var(--space-4xl);
+}
+
+/* ============================================
+     TYPOGRAPHY - Clean hierarchy
+     ============================================ */
+
+.text-display {
+  font-size: var(--font-size-5xl);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+@media (min-width: 768px) {
+  .text-display {
+    font-size: var(--font-size-6xl);
+  }
+}
+
+.text-heading {
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-snug);
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+@media (min-width: 768px) {
+  .text-heading {
+    font-size: var(--font-size-4xl);
+  }
+}
+
+.text-subheading {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+     FOCUS STATES - Minimal, warm
+     ============================================ */
+
+.focus-minimal:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-interactive-default);
+}
+
+/* ============================================
+     INTERACTIONS - Subtle hover states
+     ============================================ */
+
+.hover-lift {
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.hover-glow {
+  transition: box-shadow var(--duration-normal) var(--ease-default);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}

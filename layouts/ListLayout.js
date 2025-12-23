@@ -18,73 +18,76 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
 
   return (
     <>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        <div className="space-y-2 pt-6 pb-8 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            {title}
-          </h1>
-          <div className="relative max-w-lg">
-            <input
-              aria-label="Search articles"
-              type="text"
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Search articles"
-              className="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-900 dark:bg-gray-800 dark:text-gray-100"
-            />
-            <svg
-              className="absolute right-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-300"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
-        <ul>
-          {!filteredBlogPosts.length && 'No posts found.'}
-          {displayPosts.map((frontMatter) => {
-            const { slug, date, title, summary, tags } = frontMatter
-            return (
-              <li key={slug} className="py-4">
-                <article className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-                  <dl>
-                    <dt className="sr-only">Published on</dt>
-                    <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                      <time dateTime={date}>{formatDate(date)}</time>
-                    </dd>
-                  </dl>
-                  <div className="space-y-3 xl:col-span-3">
-                    <div>
-                      <h3 className="text-2xl font-bold leading-8 tracking-tight">
-                        <Link href={`/blog/${slug}`} className="text-gray-900 dark:text-gray-100">
-                          {title}
-                        </Link>
-                      </h3>
-                      <div className="flex flex-wrap">
-                        {tags.map((tag) => (
-                          <Tag key={tag} text={tag} />
-                        ))}
-                      </div>
-                    </div>
-                    <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                      {summary}
-                    </div>
-                  </div>
-                </article>
-              </li>
-            )
-          })}
-        </ul>
+      {/* Hero Section */}
+      <div className="section-breathe">
+        <h1 className="mb-4 text-4xl font-semibold text-text-primary md:text-5xl">{title}</h1>
+        <p className="max-w-2xl text-lg text-text-secondary">
+          Insights on software development, AI, and technology.
+        </p>
       </div>
+
+      {/* Search */}
+      <div className="relative mb-8 max-w-lg">
+        <input
+          aria-label="Search articles"
+          type="text"
+          onChange={(e) => setSearchValue(e.target.value)}
+          placeholder="Search articles..."
+          className="border-border-default block w-full rounded-lg border bg-surface-elevated px-4 py-3 text-text-primary placeholder-text-muted focus:border-border-accent focus:outline-none focus:ring-2 focus:ring-border-accent"
+        />
+        <svg
+          className="absolute right-4 top-3.5 h-5 w-5 text-text-muted"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+
+      {/* Blog Grid - Japanese Minimalism: no cards, asymmetric dividers */}
+      <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+        {!filteredBlogPosts.length && (
+          <p className="col-span-full text-center text-text-secondary">No posts found.</p>
+        )}
+        {displayPosts.map((frontMatter) => {
+          const { slug, date, title, summary, tags } = frontMatter
+          return (
+            <article key={slug} className="group divider-asymmetric relative pb-8">
+              {/* Tags */}
+              <div className="mb-3 flex flex-wrap gap-2">
+                {tags?.slice(0, 2).map((tag) => (
+                  <Tag key={tag} text={tag} />
+                ))}
+              </div>
+
+              {/* Title */}
+              <h2 className="mb-2 text-xl font-semibold text-text-primary transition-colors group-hover:text-accent-subtle">
+                <Link href={`/blog/${slug}`}>{title}</Link>
+              </h2>
+
+              {/* Summary */}
+              <p className="line-clamp-2 mb-4 flex-1 text-sm text-text-secondary">{summary}</p>
+
+              {/* Date */}
+              <time className="text-sm text-text-muted" dateTime={date}>
+                {formatDate(date)}
+              </time>
+            </article>
+          )
+        })}
+      </div>
+
       {pagination && pagination.totalPages > 1 && !searchValue && (
-        <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
+        <div className="mt-12">
+          <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
+        </div>
       )}
     </>
   )

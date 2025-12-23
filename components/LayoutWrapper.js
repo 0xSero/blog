@@ -4,46 +4,45 @@ import Link from './Link'
 import SectionContainer from './SectionContainer'
 import Footer from './Footer'
 import MobileNav from './MobileNav'
-import ThemeSwitch from './ThemeSwitch'
+import { PageTransition } from '@/lib/transitions/PageTransition'
 
 const LayoutWrapper = ({ children }) => {
   return (
-    <SectionContainer>
-      <div className="flex h-screen flex-col justify-between">
-        <header className="flex items-center justify-between py-10">
-          <div>
-            <Link href="/" aria-label={siteMetadata.headerTitle}>
-              <div className="flex items-center justify-between">
-                {typeof siteMetadata.headerTitle === 'string' ? (
-                  <div className="hidden h-6 text-2xl font-semibold sm:block">
+    <div className="min-h-screen bg-surface-base">
+      <SectionContainer>
+        <div className="flex min-h-screen flex-col">
+          <header className="flex items-center justify-between py-6">
+            <div>
+              <Link href="/home" aria-label={siteMetadata.headerTitle}>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-semibold tracking-tight text-text-primary">
                     {siteMetadata.headerTitle}
-                  </div>
-                ) : (
-                  siteMetadata.headerTitle
-                )}
-              </div>
-            </Link>
-          </div>
-          <div className="flex items-center text-base leading-5">
-            <div className="hidden sm:block">
-              {headerNavLinks.map((link) => (
-                <Link
-                  key={link.title}
-                  href={link.href}
-                  className="p-1 font-medium text-gray-900 dark:text-gray-100 sm:p-4"
-                >
-                  {link.title}
-                </Link>
-              ))}
+                  </span>
+                </div>
+              </Link>
             </div>
-            <ThemeSwitch />
-            <MobileNav />
-          </div>
-        </header>
-        <main className="mb-auto">{children}</main>
-        <Footer />
-      </div>
-    </SectionContainer>
+            <nav className="flex items-center gap-1">
+              <div className="hidden md:flex md:items-center md:gap-1">
+                {headerNavLinks.map((link) => (
+                  <Link
+                    key={link.title}
+                    href={link.href}
+                    className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
+                  >
+                    {link.title}
+                  </Link>
+                ))}
+              </div>
+              <MobileNav />
+            </nav>
+          </header>
+          <main className="flex-1">
+            <PageTransition>{children}</PageTransition>
+          </main>
+          <Footer />
+        </div>
+      </SectionContainer>
+    </div>
   )
 }
 
