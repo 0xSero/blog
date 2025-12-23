@@ -1,5 +1,5 @@
 import Link from '@/components/Link'
-import Tag from '@/components/Tag'
+import Tag, { TagList } from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { useState } from 'react'
 import Pagination from '@/components/Pagination'
@@ -61,10 +61,8 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
           return (
             <article key={slug} className="group divider-asymmetric relative pb-8">
               {/* Tags */}
-              <div className="mb-3 flex flex-wrap gap-2">
-                {tags?.slice(0, 2).map((tag) => (
-                  <Tag key={tag} text={tag} />
-                ))}
+              <div className="mb-3">
+                <TagList tags={tags} limit={2} />
               </div>
 
               {/* Title */}

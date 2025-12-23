@@ -1,6 +1,5 @@
 import Link from '@/components/Link'
 import { PageSEO } from '@/components/SEO'
-import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { getAllTags } from '@/lib/tags'
 import kebabCase from '@/lib/utils/kebabCase'
@@ -13,30 +12,69 @@ export async function getStaticProps() {
 
 export default function Tags({ tags }) {
   const sortedTags = Object.keys(tags).sort((a, b) => tags[b] - tags[a])
+
+  // Group tags by first letter
+  const groupedTags = sortedTags.reduce((acc, tag) => {
+    const letter = tag[0].toUpperCase()
+    if (!acc[letter]) acc[letter] = []
+    acc[letter].push({ name: tag, count: tags[tag] })
+    return acc
+  }, {})
+
   return (
     <>
       <PageSEO title={`Tags - ${siteMetadata.author}`} description="Things I blog about" />
-      <div className="flex flex-col items-start justify-start divide-y divide-gray-200 dark:divide-gray-700 md:mt-24 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0">
-        <div className="space-x-2 pt-6 pb-8 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:border-r-2 md:px-6 md:text-6xl md:leading-14">
-            Tags
-          </h1>
+
+      <div className="section-breathe">
+        <h1 className="mb-4 text-4xl font-semibold text-text-primary md:text-5xl">Tags</h1>
+        <p className="text-lg text-text-secondary">{sortedTags.length} topics across all posts</p>
+      </div>
+
+      {/* Top tags - most used */}
+      <div className="mb-12">
+        <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-text-muted">
+          Most Used
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          {sortedTags.slice(0, 8).map((t) => (
+            <Link
+              key={t}
+              href={`/tags/${kebabCase(t)}`}
+              className="group flex items-center gap-2 rounded-lg border border-border-subtle bg-surface-elevated px-4 py-2 transition-all hover:border-border-accent hover:bg-surface-inset"
+            >
+              <span className="text-text-primary group-hover:text-accent-subtle">{t}</span>
+              <span className="text-xs text-text-muted">{tags[t]}</span>
+            </Link>
+          ))}
         </div>
-        <div className="flex max-w-lg flex-wrap">
-          {Object.keys(tags).length === 0 && 'No tags found.'}
-          {sortedTags.map((t) => {
-            return (
-              <div key={t} className="mt-2 mb-2 mr-5">
-                <Tag text={t} />
-                <Link
-                  href={`/tags/${kebabCase(t)}`}
-                  className="-ml-2 text-sm font-semibold uppercase text-gray-600 dark:text-gray-300"
-                >
-                  {` (${tags[t]})`}
-                </Link>
+      </div>
+
+      {/* All tags alphabetized */}
+      <div>
+        <h2 className="mb-6 text-sm font-medium uppercase tracking-wider text-text-muted">
+          All Tags
+        </h2>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {Object.keys(groupedTags)
+            .sort()
+            .map((letter) => (
+              <div key={letter}>
+                <h3 className="mb-3 text-lg font-semibold text-text-primary">{letter}</h3>
+                <ul className="space-y-2">
+                  {groupedTags[letter].map(({ name, count }) => (
+                    <li key={name}>
+                      <Link
+                        href={`/tags/${kebabCase(name)}`}
+                        className="flex items-center justify-between text-text-secondary transition-colors hover:text-text-primary"
+                      >
+                        <span>{name}</span>
+                        <span className="text-xs text-text-muted">{count}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            )
-          })}
+            ))}
         </div>
       </div>
     </>

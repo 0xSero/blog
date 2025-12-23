@@ -10,6 +10,7 @@ import Head from 'next/head'
 import siteMetadata from '@/data/siteMetadata'
 import Analytics from '@/components/analytics'
 import LayoutWrapper from '@/components/LayoutWrapper'
+import PageTransition from '@/components/PageTransition'
 import { ClientReload } from '@/components/ClientReload'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
@@ -26,7 +27,7 @@ export default function App({ Component, pageProps }) {
       </Head>
       {isDevelopment && isSocket && <ClientReload />}
       <Analytics />
-      {getLayout(<Component {...pageProps} />)}
+      <PageTransition>{getLayout(<Component {...pageProps} />)}</PageTransition>
     </ThemeProvider>
   )
 }
