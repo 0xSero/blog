@@ -83,6 +83,97 @@ The process is simple: provide a documentation link, Cursor indexes it, and you 
 
 3. **Manage sources:** Find all documentation under Settings > Features > Docs. Cursor automatically re-indexes these periodically as they change.
 
+Cursor includes built-in documentation for many popular libraries and frameworks accessible via @LibraryName (like @React or @Python). You can extend this with specialized libraries, version-specific docs, or internal API documentation.
+
+## Unlocking Agent Mode
+
+Cursor's Agent mode (accessible via `cmd + I` or using the dropdown) is its most powerful feature. It continuously calls Claude until the goal has been achieved, searching files, gathering more context, running tests, and installing packages as needed.
+
+For maximum efficiency:
+
+- Enable "Yolo mode" in settings to allow Cursor to run tests without asking for confirmation
+- Create a new agent window periodically as longer conversations can cause Claude to forget earlier instructions
+- Use specific phrases like "think hard" to trigger extended thinking for complex problems
+
+## Claude Code: Command Line Mastery
+
+Claude Code provides similar capabilities but in a command-line environment. It operates directly in your terminal, understanding your project context and taking real actions with no need to manually add files to context.
+
+A great trick I've found is using graduated "thinking" triggers. Each level allocates progressively more thinking budget, allowing Claude to evaluate alternatives more thoroughly before taking action.
+
+For long sessions, use the `/clear` command frequently between tasks to reset the context window, which can become cluttered with irrelevant conversation, file contents, and commands.
+
+## AI-Optimized Architecture Patterns
+
+Certain architectural patterns work exceptionally well with AI coding assistants:
+
+**Reflection Pattern:** Have the AI generate a solution, then review and critique its own code, refining it based on its self-evaluation.
+
+**Tool Use Pattern:** Enable the AI to interact with external tools and resources, accessing databases, performing web searches, or executing functions.
+
+**Planning Pattern:** Before implementation, have the AI create a detailed plan, then provide feedback before it proceeds with coding.
+
+**Multiagent Pattern:** Use "subagents" to verify details or investigate particular questions while preserving main context.
+
+These patterns enable more autonomous, efficient AI coding assistance that produces higher quality results.
+
+## Test-Driven Development with AI
+
+AI coding assistants excel at generating tests, making TDD particularly effective:
+
+1. Have the AI generate test cases for your feature
+2. Implement the tests
+3. Ask the AI to write code that passes the tests
+4. Integrate the code and run the tests
+5. Get the AI to fix any failing tests
+6. Finalize the implementation
+
+Claude Code is especially effective for test-driven development, debugging complex issues, and large-scale refactoring.
+
+## Project Structure Optimization
+
+Organizing your project files to maximize AI comprehension pays enormous dividends:
+
+- Include your PRD (Product Requirements Document) as a Markdown file in your repository
+- Use clear, descriptive file and directory names
+- Keep related files close together in the directory structure
+- Use `.cursorignore` to skip large files the AI should ignore
+
+## Preserving Your Coding Skills
+
+Using AI tools extensively raises valid concerns about skill atrophy. Here's my balanced approach:
+
+**Schedule manual coding sessions:** Set aside dedicated time for coding without AI assistance, focusing on algorithms, data structures, and system design.
+
+**Implement core functionality manually:** Critical security, performance, and business logic should still be written by you.
+
+**Review ALL AI-generated code:** Understand every line before accepting it, ask the AI to explain complex sections, and modify the code manually to ensure understanding.
+
+**Regular challenges:** Periodically solve coding problems without AI assistance to maintain your skills.
+
+**Assessment framework:** Track your progress by setting a baseline of skills, identifying areas for improvement, and creating targeted practice plans.
+
+## Workflow Strategies by Project Type
+
+Different project types benefit from customized AI workflows:
+
+### Frontend Development
+
+- Use AI to generate the project scaffold
+- Let it handle boilerplate components
+- Focus your manual effort on complex interactions and state management
+
+### Backend/API Development
+
+- Have AI generate endpoint stubs and validation
+- Manually implement business logic and security
+- Use AI for test coverage
+
+### Refactoring
+
+- Claude Code excels here—point it at legacy code and describe the target architecture
+- Review changes carefully before committing
+
 ---
 
 Still refining this workflow. The tools keep getting better, and so does the output.
