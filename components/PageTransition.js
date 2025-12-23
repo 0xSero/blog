@@ -15,7 +15,6 @@ const PageTransition = ({ children }) => {
     }
 
     const handleComplete = () => {
-      // Keep transition visible for full 2s
       setTimeout(() => {
         setIsTransitioning(false)
       }, 2000)
@@ -32,14 +31,13 @@ const PageTransition = ({ children }) => {
     }
   }, [router])
 
-  // Update children after transition starts
   useEffect(() => {
     if (!isTransitioning) {
       setDisplayChildren(children)
     }
   }, [children, isTransitioning])
 
-  // Canvas animation - inverted colors splash
+  // Canvas animation
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas || !isTransitioning) return
@@ -47,6 +45,8 @@ const PageTransition = ({ children }) => {
     const ctx = canvas.getContext('2d')
     const width = window.innerWidth
     const height = window.innerHeight
+    const centerX = width / 2
+    const centerY = height / 2
 
     canvas.width = width * 2
     canvas.height = height * 2
@@ -54,107 +54,215 @@ const PageTransition = ({ children }) => {
     canvas.style.height = `${height}px`
     ctx.scale(2, 2)
 
-    // Inverted colors (light on dark -> dark on light)
-    const bgColor = '#E8E4E0' // Light cream (inverted from dark)
-    const fgColor = '#141312' // Dark (inverted from light text)
+    // Colors - inverted (white bg, dark elements)
+    const bgColor = '#E8E4E0'
+    const darkColor = '#141312'
+    const accentColor = '#8B7355'
 
     let animationId
-    let progress = 0
-    const duration = 2000
     const startTime = Date.now()
+    const duration = 2000
 
-    // Particles for the transition
-    const particles = []
-    const particleCount = 150
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        size: Math.random() * 4 + 2,
-        speedX: (Math.random() - 0.5) * 8,
-        speedY: (Math.random() - 0.5) * 8,
-        life: Math.random(),
+    // Orbiting particles around center
+    const orbitParticles = []
+    for (let i = 0; i < 60; i++) {
+      orbitParticles.push({
+        angle: (Math.PI * 2 * i) / 60,
+        radius: 80 + Math.random() * 100,
+        speed: 0.02 + Math.random() * 0.03,
+        size: 1 + Math.random() * 3,
+        offset: Math.random() * Math.PI * 2,
       })
+    }
+
+    // Ripple rings
+    const ripples = []
+    for (let i = 0; i < 5; i++) {
+      ripples.push({
+        radius: 0,
+        maxRadius: 300 + i * 80,
+        delay: i * 150,
+        width: 2 + i * 0.5,
+      })
+    }
+
+    // Flying particles from edges
+    const flyingParticles = []
+    for (let i = 0; i < 40; i++) {
+      const edge = Math.floor(Math.random() * 4)
+      let x, y, vx, vy
+      switch (edge) {
+        case 0:
+          x = Math.random() * width
+          y = 0
+          vx = (centerX - x) * 0.01
+          vy = 3
+          break
+        case 1:
+          x = width
+          y = Math.random() * height
+          vx = -3
+          vy = (centerY - y) * 0.01
+          break
+        case 2:
+          x = Math.random() * width
+          y = height
+          vx = (centerX - x) * 0.01
+          vy = -3
+          break
+        case 3:
+          x = 0
+          y = Math.random() * height
+          vx = 3
+          vy = (centerY - y) * 0.01
+          break
+      }
+      flyingParticles.push({ x, y, vx, vy, size: 1 + Math.random() * 2, life: 1 })
     }
 
     const animate = () => {
       const elapsed = Date.now() - startTime
-      progress = Math.min(elapsed / duration, 1)
+      const progress = Math.min(elapsed / duration, 1)
 
-      // Clear with inverted background
+      // Clear with white/cream background
       ctx.fillStyle = bgColor
       ctx.fillRect(0, 0, width, height)
 
-      // Expanding circle from center
-      const maxRadius = Math.sqrt(width * width + height * height)
-      const circleProgress = easeInOutCubic(Math.min(progress * 2, 1))
-      const shrinkProgress = progress > 0.5 ? easeInOutCubic((progress - 0.5) * 2) : 0
+      // Draw ripple rings expanding from center
+      ripples.forEach((ripple) => {
+        const rippleElapsed = elapsed - ripple.delay
+        if (rippleElapsed > 0) {
+          const rippleProgress = Math.min(rippleElapsed / 1000, 1)
+          const currentRadius = ripple.maxRadius * easeOutCubic(rippleProgress)
+          const alpha = 1 - rippleProgress
 
-      // Draw main circle
-      ctx.beginPath()
-      ctx.arc(
-        width / 2,
-        height / 2,
-        maxRadius * circleProgress * (1 - shrinkProgress * 0.3),
-        0,
-        Math.PI * 2
-      )
-      ctx.fillStyle = fgColor
-      ctx.globalAlpha = 0.1 + 0.2 * Math.sin(progress * Math.PI)
-      ctx.fill()
-      ctx.globalAlpha = 1
+          ctx.beginPath()
+          ctx.arc(centerX, centerY, currentRadius, 0, Math.PI * 2)
+          ctx.strokeStyle = darkColor
+          ctx.globalAlpha = alpha * 0.3
+          ctx.lineWidth = ripple.width
+          ctx.stroke()
+          ctx.globalAlpha = 1
+        }
+      })
 
-      // Draw particles
-      particles.forEach((p, i) => {
-        p.x += p.speedX * (1 - progress)
-        p.y += p.speedY * (1 - progress)
-        p.life -= 0.005
+      // Draw orbiting particles
+      orbitParticles.forEach((p) => {
+        p.angle += p.speed
+        const wobble = Math.sin(elapsed * 0.003 + p.offset) * 20
+        const x = centerX + Math.cos(p.angle) * (p.radius + wobble)
+        const y = centerY + Math.sin(p.angle) * (p.radius + wobble)
+
+        ctx.beginPath()
+        ctx.arc(x, y, p.size, 0, Math.PI * 2)
+        ctx.fillStyle = darkColor
+        ctx.globalAlpha = 0.6
+        ctx.fill()
+        ctx.globalAlpha = 1
+
+        // Trail
+        for (let t = 1; t <= 3; t++) {
+          const trailAngle = p.angle - p.speed * t * 3
+          const tx = centerX + Math.cos(trailAngle) * (p.radius + wobble)
+          const ty = centerY + Math.sin(trailAngle) * (p.radius + wobble)
+          ctx.beginPath()
+          ctx.arc(tx, ty, p.size * (1 - t * 0.25), 0, Math.PI * 2)
+          ctx.fillStyle = darkColor
+          ctx.globalAlpha = 0.2 - t * 0.05
+          ctx.fill()
+        }
+        ctx.globalAlpha = 1
+      })
+
+      // Draw flying particles toward center
+      flyingParticles.forEach((p) => {
+        p.x += p.vx
+        p.y += p.vy
+
+        // Accelerate toward center
+        const dx = centerX - p.x
+        const dy = centerY - p.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+
+        if (dist > 50) {
+          p.vx += dx * 0.0005
+          p.vy += dy * 0.0005
+        }
+
+        if (dist < 100) {
+          p.life -= 0.02
+        }
 
         if (p.life > 0) {
           ctx.beginPath()
           ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2)
-          ctx.fillStyle = fgColor
-          ctx.globalAlpha = p.life * 0.6
+          ctx.fillStyle = accentColor
+          ctx.globalAlpha = p.life * 0.8
           ctx.fill()
           ctx.globalAlpha = 1
         }
       })
 
-      // Scan lines effect
-      ctx.fillStyle = fgColor
-      for (let y = 0; y < height; y += 4) {
-        ctx.globalAlpha = 0.03
+      // Center dark circle - always present
+      const pulseScale = 1 + Math.sin(elapsed * 0.008) * 0.1
+      const circleRadius = 40 * pulseScale
+
+      // Outer glow
+      const gradient = ctx.createRadialGradient(
+        centerX,
+        centerY,
+        circleRadius * 0.5,
+        centerX,
+        centerY,
+        circleRadius * 2
+      )
+      gradient.addColorStop(0, 'rgba(20, 19, 18, 0.3)')
+      gradient.addColorStop(1, 'rgba(20, 19, 18, 0)')
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, circleRadius * 2, 0, Math.PI * 2)
+      ctx.fillStyle = gradient
+      ctx.fill()
+
+      // Main dark circle
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, circleRadius, 0, Math.PI * 2)
+      ctx.fillStyle = darkColor
+      ctx.fill()
+
+      // Inner highlight
+      ctx.beginPath()
+      ctx.arc(
+        centerX - circleRadius * 0.2,
+        centerY - circleRadius * 0.2,
+        circleRadius * 0.3,
+        0,
+        Math.PI * 2
+      )
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
+      ctx.fill()
+
+      // Rotating arcs around center circle
+      const arcCount = 3
+      for (let i = 0; i < arcCount; i++) {
+        const arcAngle = elapsed * 0.002 + (Math.PI * 2 * i) / arcCount
+        const arcRadius = circleRadius + 15 + i * 10
+
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, arcRadius, arcAngle, arcAngle + Math.PI * 0.5)
+        ctx.strokeStyle = darkColor
+        ctx.globalAlpha = 0.4 - i * 0.1
+        ctx.lineWidth = 2
+        ctx.stroke()
+        ctx.globalAlpha = 1
+      }
+
+      // Subtle scan line effect
+      ctx.fillStyle = darkColor
+      for (let y = 0; y < height; y += 3) {
+        ctx.globalAlpha = 0.015
         ctx.fillRect(0, y, width, 1)
       }
       ctx.globalAlpha = 1
-
-      // Center text
-      const textProgress = progress > 0.2 && progress < 0.8 ? 1 : 0
-      if (textProgress) {
-        ctx.font = '600 14px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = fgColor
-        ctx.textAlign = 'center'
-        ctx.globalAlpha = Math.sin(((progress - 0.2) * Math.PI) / 0.6) * 0.8
-        ctx.fillText('LOADING', width / 2, height / 2)
-
-        // Blinking cursor
-        if (Math.floor(elapsed / 300) % 2 === 0) {
-          const textWidth = ctx.measureText('LOADING').width
-          ctx.fillRect(width / 2 + textWidth / 2 + 4, height / 2 - 8, 2, 16)
-        }
-        ctx.globalAlpha = 1
-      }
-
-      // Glitch bars
-      if (Math.random() > 0.95) {
-        const barY = Math.random() * height
-        const barHeight = Math.random() * 20 + 5
-        ctx.fillStyle = fgColor
-        ctx.globalAlpha = 0.3
-        ctx.fillRect(0, barY, width, barHeight)
-        ctx.globalAlpha = 1
-      }
 
       if (progress < 1) {
         animationId = requestAnimationFrame(animate)
@@ -184,9 +292,8 @@ const PageTransition = ({ children }) => {
   )
 }
 
-// Easing function
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3)
 }
 
 export default PageTransition
