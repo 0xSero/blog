@@ -358,7 +358,7 @@ export default function About() {
             </h2>
             <p className="text-base leading-relaxed text-text-secondary sm:text-lg">
               I run local meetups for builders. Read a lot about systems thinking. Lift weights
-              because desk work will kill you otherwise. Family comes first—everything else is
+              because desk work will kill you otherwise. Family comes first-everything else is
               noise.
             </p>
             <p className="mt-3 text-sm text-text-muted sm:mt-4">

@@ -6,7 +6,7 @@ draft: false
 summary: 'What I learned building arbitrage bots and discovering just how deep the MEV rabbit hole goes.'
 ---
 
-I've been building bots to arbitrage profitable function calls on smart contracts. I knew MEV existed—I've seen their addresses in action dozens of times.
+I've been building bots to arbitrage profitable function calls on smart contracts. I knew MEV existed-I've seen their addresses in action dozens of times.
 
 What I didn't know is the depth of their operations, and how shallow my understanding of what they exploit really was.
 
@@ -16,8 +16,8 @@ It's fascinating how bots compete against each other to claim profitable transac
 
 They do this by increasing the fee paid per unit of gas:
 
-- **Reactively** — checking what the last bot bid and bidding more
-- **Blindly** — increasing the bid by a static amount every X seconds
+- **Reactively** - checking what the last bot bid and bidding more
+- **Blindly** - increasing the bid by a static amount every X seconds
 
 Over time, this drives fees so high the transaction becomes unprofitable. The miner wins, everyone else loses.
 
@@ -42,7 +42,7 @@ The level of sophistication is mind-blowing. Examining their bytecode reveals ha
 
 ## Flashbots Isn't Enough
 
-While improving my bots, I reached for Flashbots—a promising solution to MEV extraction. But it doesn't prevent it completely.
+While improving my bots, I reached for Flashbots-a promising solution to MEV extraction. But it doesn't prevent it completely.
 
 These same bots monitor not just public mempools, but mined blocks and all transactions within.
 
@@ -70,10 +70,10 @@ One well-crafted script can confuse thousands of bots for days. It's reasonable 
 
 Smart contract designers need to implement:
 
-- **Time-locked execution mechanisms** — delay between intent and execution
-- **Commit-reveal patterns** — hide transaction details until execution
-- **Strategic honeypot transactions** — poison the well for blind bots
-- **Unpredictable execution paths** — make simulation expensive or unreliable
+- **Time-locked execution mechanisms** - delay between intent and execution
+- **Commit-reveal patterns** - hide transaction details until execution
+- **Strategic honeypot transactions** - poison the well for blind bots
+- **Unpredictable execution paths** - make simulation expensive or unreliable
 
 The MEV landscape is evolving quickly. Understanding these predators is essential to designing systems that maintain economic integrity while discouraging exploitative extraction.
 
@@ -88,6 +88,6 @@ For more on MEV and baiting bots:
 - [Escaping the Dark Forest](https://samczsun.com/escaping-the-dark-forest/) by samczsun
 - [Flashbots Research](https://writings.flashbots.net/) by Phil Daian and team
 - [MEV-Explore](https://explore.flashbots.net/) by Flashbots
-- [Scott Bigelow's MEV Example](https://youtu.be/UZ-NNd6yjFM) — great walkthrough
+- [Scott Bigelow's MEV Example](https://youtu.be/UZ-NNd6yjFM) - great walkthrough
 
 Still building. Still learning. The dark forest is deeper than I thought.

@@ -1,35 +1,33 @@
 ---
-title: 'AI-Assisted Coding: My Experience'
+title: 'AI-Assisted Coding: What Actually Works'
 date: '2024-12-23'
 tags: ['AI', 'Developer Tools', 'Productivity', 'Cursor', 'Claude']
 draft: false
 summary: 'Months of optimizing my workflow with Cursor and Claude Code. The techniques that actually multiply productivity.'
 ---
 
-AI-assisted coding has fundamentally transformed how I build software. After spending months deeply exploring and optimizing my workflow with tools like Cursor IDE and Claude Code, I've compiled the essential techniques that have multiplied my productivity while preserving my fundamental coding skills.
+AI-assisted coding changed how I build software. After months optimizing my workflow with Cursor and Claude Code, here are the techniques that actually multiply productivity without turning you into a prompt monkey.
 
-## The Context Window Game-Changer
+## Context Windows Matter
 
-Understanding context windows is crucial for maximizing AI coding efficiency.
+Understanding context windows is the difference between useful AI and garbage output.
 
-Cursor's implementation of Claude 3.7 Sonnet offers approximately 48K tokens in standard mode, while Max mode provides a massive 200K token context window (though at additional cost of $0.05 per prompt and per tool call).
+Cursor's Claude 3.7 Sonnet gives you about 48K tokens in standard mode. Max mode bumps that to 200K (costs extra, $0.05 per prompt and tool call).
 
-For reference:
+Real numbers:
 
-- A typical 200-line React component consumes about **1,500 tokens**
-- A Python file of similar length requires approximately **1,700 tokens**
+- 200-line React component: ~1,500 tokens
+- Python file same length: ~1,700 tokens
 
-This means you can comfortably fit multiple files within the standard context window, but should be strategic about which files you include.
+You can fit multiple files in standard context, but be strategic. The golden rule: keep files under 400 lines. Break larger files into modules with clear responsibilities. Complex projects, aim for under 1k lines per file.
 
-**The golden rule:** keep individual files under 400 lines whenever possible, and break larger files into modules with clear responsibilities. For more complex projects/files/objects aim for less than 1k lines.
+## Smart Context Management
 
-## Smart Context Management Techniques
+The technique that changed everything: strategic context management.
 
-The single technique that transformed my Cursor workflow was learning to strategically manage context.
+Close all editor tabs. Open only the relevant files. Add them to context using slash (/) menu and "Reference Open Editors". The AI gets exactly what it needs, nothing more.
 
-Close all editor tabs first, then open only the most relevant files before adding them all to context using the slash (/) menu → "Reference Open Editors". This provides the AI with precisely the information it needs without overwhelming the context window.
-
-For large codebases, create a dedicated `/docs/ai` folder containing files that explain your:
+For large codebases, create a `/docs/ai` folder with:
 
 - Architecture approach
 - Coding standards
@@ -38,13 +36,13 @@ For large codebases, create a dedicated `/docs/ai` folder containing files that 
 - API conventions
 - Testing strategy
 
-The AI will reference these documents automatically when generating code, ensuring consistency across your entire codebase.
+The AI references these automatically. Consistency across your entire codebase without repeating yourself.
 
-## The Power of .cursor/rules
+## .cursor/rules
 
-One of Cursor's most underutilized features is the `.cursor/rules` file, which provides specific project rules that Cursor AI will follow when generating code. This is incredibly powerful for maintaining consistency.
+Underutilized feature. The `.cursor/rules` file gives project-specific instructions that Cursor follows when generating code.
 
-Here's an example `.cursor/rules` file I use for React projects:
+Example for React projects:
 
 ```
 UI and Styling:
@@ -67,113 +65,135 @@ Architecture:
 - Extract complex logic to custom hooks
 ```
 
-This ensures the AI consistently applies your preferred patterns and best practices without you having to repeat the same instructions.
+Your patterns, applied consistently, without repeating instructions every prompt.
 
 ## @Docs Feature
 
-Cursor's @Docs feature is a game-changer for maintaining flow and improving AI code quality. This powerful capability lets you integrate external documentation directly into your AI interactions without constant context switching.
+Cursor's @Docs lets you integrate external documentation directly into AI interactions. No more tab-switching for reference material.
 
-The process is simple: provide a documentation link, Cursor indexes it, and you can reference it by typing @Doc or the document's name in your prompts. This keeps you focused on coding rather than tab-switching for reference material.
+Provide a documentation link, Cursor indexes it, reference it with @Doc or the document name in prompts.
 
-### Quick Setup Guide
+**Setup:**
 
-1. **Add documentation:** Type @ in Chat or Composer, select "Docs," enter a URL, and give it a name (e.g., "TensorFlow").
+1. Type @ in Chat or Composer, select "Docs," enter URL, name it (e.g., "TensorFlow")
+2. Reference with @Name syntax: "Implement a custom loss function using @TensorFlow documentation"
+3. Manage under Settings > Features > Docs. Auto re-indexes as docs change.
 
-2. **Use in prompts:** Reference documentation with @Name syntax: "Implement a custom loss function using @TensorFlow documentation."
+Built-in docs for popular libraries via @LibraryName (@React, @Python). Extend with specialized libraries, version-specific docs, internal API docs.
 
-3. **Manage sources:** Find all documentation under Settings > Features > Docs. Cursor automatically re-indexes these periodically as they change.
+## Agent Mode
 
-Cursor includes built-in documentation for many popular libraries and frameworks accessible via @LibraryName (like @React or @Python). You can extend this with specialized libraries, version-specific docs, or internal API documentation.
-
-## Unlocking Agent Mode
-
-Cursor's Agent mode (accessible via `cmd + I` or using the dropdown) is its most powerful feature. It continuously calls Claude until the goal has been achieved, searching files, gathering more context, running tests, and installing packages as needed.
+Cursor Agent mode (`cmd + I` or dropdown) is the most powerful feature. It loops Claude until the goal is achieved: searching files, gathering context, running tests, installing packages.
 
 For maximum efficiency:
 
-- Enable "Yolo mode" in settings to allow Cursor to run tests without asking for confirmation
-- Create a new agent window periodically as longer conversations can cause Claude to forget earlier instructions
-- Use specific phrases like "think hard" to trigger extended thinking for complex problems
+- Enable "Yolo mode" in settings. Cursor runs tests without confirmation prompts.
+- Create new agent windows periodically. Long conversations cause Claude to forget earlier instructions.
+- Use "think hard" to trigger extended thinking on complex problems.
 
-## Claude Code: Command Line Mastery
+## Claude Code: Command Line
 
-Claude Code provides similar capabilities but in a command-line environment. It operates directly in your terminal, understanding your project context and taking real actions with no need to manually add files to context.
+Claude Code brings similar capabilities to the terminal. It understands project context and takes real actions. No manual file context needed.
 
-A great trick I've found is using graduated "thinking" triggers. Each level allocates progressively more thinking budget, allowing Claude to evaluate alternatives more thoroughly before taking action.
+Graduated thinking triggers allocate more thinking budget, letting Claude evaluate alternatives before acting.
 
-For long sessions, use the `/clear` command frequently between tasks to reset the context window, which can become cluttered with irrelevant conversation, file contents, and commands.
+For long sessions, use `/clear` frequently between tasks. Context windows get cluttered with irrelevant conversation, file contents, commands.
 
-## AI-Optimized Architecture Patterns
+## What I Built With This
 
-Certain architectural patterns work exceptionally well with AI coding assistants:
+These tools powered most of my recent projects:
 
-**Reflection Pattern:** Have the AI generate a solution, then review and critique its own code, refining it based on its self-evaluation.
+**[AI Data Extraction](https://github.com/0xSero/ai-data-extraction)** (121 stars): Extract personal data from Cursor, Codex, Claude Code, Windsurf, Trae. Built the core extraction logic manually, used AI for file parsing and edge cases.
 
-**Tool Use Pattern:** Enable the AI to interact with external tools and resources, accessing databases, performing web searches, or executing functions.
+**[Open Orchestra](https://github.com/0xSero/open-orchestra)** (96 stars): Multi-agent coordination. Designed the architecture myself, let AI handle boilerplate and tests.
 
-**Planning Pattern:** Before implementation, have the AI create a detailed plan, then provide feedback before it proceeds with coding.
+**[Azul](https://github.com/0xSero/Azul)** (68 stars): Terminal web browser with AI. Manual design for the browser core, AI for rendering and interface polish.
 
-**Multiagent Pattern:** Use "subagents" to verify details or investigate particular questions while preserving main context.
+**[mem-layer](https://github.com/0xSero/mem-layer)** (55 stars): Graph database memory organization for AI. Manually designed the graph structure, AI generated CRUD operations.
 
-These patterns enable more autonomous, efficient AI coding assistance that produces higher quality results.
+**[minimax-m2-proxy](https://github.com/0xSero/minimax-m2-proxy)** (33 stars): Proxy enabling interleaved thinking and tool calls. Critical protocol logic done by hand, AI handled HTTP scaffolding.
 
-## Test-Driven Development with AI
+**[codex-local](https://github.com/0xSero/codex-local)** (29 stars): Modified Codex CLI for local LLMs. Forked and modified manually, AI helped with configuration options.
 
-AI coding assistants excel at generating tests, making TDD particularly effective:
+The pattern: design the hard parts yourself, let AI handle the repetitive stuff.
 
-1. Have the AI generate test cases for your feature
+## Architecture Patterns That Work
+
+Certain patterns work exceptionally well with AI:
+
+**Reflection Pattern:** AI generates a solution, then reviews and critiques its own code, refining based on self-evaluation.
+
+**Tool Use Pattern:** AI interacts with external tools. Databases, web searches, function execution.
+
+**Planning Pattern:** AI creates a detailed plan before implementation. Provide feedback before coding starts.
+
+**Multiagent Pattern:** Use "subagents" to verify details or investigate questions while preserving main context.
+
+More autonomous assistance, higher quality results.
+
+## TDD with AI
+
+AI excels at generating tests. TDD becomes powerful:
+
+1. AI generates test cases for your feature
 2. Implement the tests
-3. Ask the AI to write code that passes the tests
-4. Integrate the code and run the tests
-5. Get the AI to fix any failing tests
-6. Finalize the implementation
+3. AI writes code that passes the tests
+4. Integrate and run tests
+5. AI fixes failing tests
+6. Finalize
 
-Claude Code is especially effective for test-driven development, debugging complex issues, and large-scale refactoring.
+Claude Code is especially effective for TDD, debugging complex issues, large-scale refactoring.
 
-## Project Structure Optimization
+## Project Structure
 
-Organizing your project files to maximize AI comprehension pays enormous dividends:
+Organize files for AI comprehension:
 
-- Include your PRD (Product Requirements Document) as a Markdown file in your repository
-- Use clear, descriptive file and directory names
-- Keep related files close together in the directory structure
-- Use `.cursorignore` to skip large files the AI should ignore
+- Include PRD (Product Requirements Document) as Markdown in the repo
+- Clear, descriptive file and directory names
+- Keep related files close in directory structure
+- Use `.cursorignore` for large files AI should skip
 
-## Preserving Your Coding Skills
+## Preserving Your Skills
 
-Using AI tools extensively raises valid concerns about skill atrophy. Here's my balanced approach:
+Valid concern: skill atrophy from AI tools. My approach:
 
-**Schedule manual coding sessions:** Set aside dedicated time for coding without AI assistance, focusing on algorithms, data structures, and system design.
+**Manual coding sessions:** Dedicated time without AI. Focus on algorithms, data structures, system design.
 
-**Implement core functionality manually:** Critical security, performance, and business logic should still be written by you.
+**Core functionality by hand:** Security, performance, business logic. Written by you.
 
-**Review ALL AI-generated code:** Understand every line before accepting it, ask the AI to explain complex sections, and modify the code manually to ensure understanding.
+**Review everything:** Understand every line before accepting. Ask AI to explain complex sections. Modify manually to ensure understanding.
 
-**Regular challenges:** Periodically solve coding problems without AI assistance to maintain your skills.
+**Regular challenges:** Solve coding problems without AI periodically.
 
-**Assessment framework:** Track your progress by setting a baseline of skills, identifying areas for improvement, and creating targeted practice plans.
+**Track progress:** Baseline your skills, identify areas for improvement, create practice plans.
 
-## Workflow Strategies by Project Type
-
-Different project types benefit from customized AI workflows:
+## Workflow by Project Type
 
 ### Frontend Development
 
-- Use AI to generate the project scaffold
-- Let it handle boilerplate components
-- Focus your manual effort on complex interactions and state management
+- Manually design component hierarchy
+- AI generates project scaffold
+- AI handles boilerplate components
+- Manual effort on complex interactions and state
+- Manually design API integrations, AI implements calls
+- AI generates test cases, manually add edge cases
 
-### Backend/API Development
+### Backend API Development
 
-- Have AI generate endpoint stubs and validation
-- Manually implement business logic and security
-- Use AI for test coverage
+- Manually design data models and relationships
+- AI generates OpenAPI/Swagger specs
+- Alternate between AI-generated code and manual implementation
+- Manually implement validation logic, AI generates tests
+- AI generates comprehensive API documentation
 
 ### Refactoring
 
-- Claude Code excels here—point it at legacy code and describe the target architecture
+- Claude Code excels here
+- Point it at legacy code, describe target architecture
 - Review changes carefully before committing
 
----
+## The Balance
 
-Still refining this workflow. The tools keep getting better, and so does the output.
+As these tools evolve, successful developers will balance AI assistance with human judgment. AI enhances capabilities. It doesn't replace them.
+
+Design the architecture. Understand the code. Let AI handle the tedious parts. Ship faster without becoming dependent.
