@@ -13,6 +13,7 @@ const siteMetadata = {
   email: 'contact@sybilsolutions.com',
   github: 'https://github.com/0xSero',
   twitter: 'https://x.com/0xSero',
+  huggingface: 'https://huggingface.co/0xSero',
   youtube: '',
   linkedin: 'https://www.linkedin.com/in/sero-346b85202/',
   locale: 'en-US',

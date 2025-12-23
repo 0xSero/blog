@@ -191,6 +191,7 @@ export default function About() {
           <div className="mt-8 flex justify-center gap-5 sm:mt-10 sm:gap-6">
             <SocialIcon kind="github" href="https://github.com/0xSero" size="6" />
             <SocialIcon kind="twitter" href="https://x.com/0xSero" size="6" />
+            <SocialIcon kind="huggingface" href="https://huggingface.co/0xSero" size="6" />
             <SocialIcon kind="mail" href="mailto:admin@serotonindesigns.com" size="6" />
             <SocialIcon
               kind="linkedin"
