@@ -357,12 +357,12 @@ export default function About() {
               Outside the Terminal
             </h2>
             <p className="text-base leading-relaxed text-text-secondary sm:text-lg">
-              I host local meetups. I read too many books about systems thinking. I work out because
-              sitting at a computer all day will kill you. I spend time with my family because
-              nothing else matters as much as they pretend other things do.
+              I run local meetups for builders. Read a lot about systems thinking. Lift weights
+              because desk work will kill you otherwise. Family comes first—everything else is
+              noise.
             </p>
             <p className="mt-3 text-sm text-text-muted sm:mt-4">
-              Based in the US. Async communication. Clear requirements. Ship over talk.
+              US-based. Async preferred. Clear specs. Ship it.
             </p>
           </div>
         </SlideUp>
