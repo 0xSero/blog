@@ -1,0 +1,88 @@
+---
+title: 'AI-Assisted Coding: My Experience'
+date: '2024-12-23'
+tags: ['AI', 'Developer Tools', 'Productivity', 'Cursor', 'Claude']
+draft: false
+summary: 'Months of optimizing my workflow with Cursor and Claude Code. The techniques that actually multiply productivity.'
+---
+
+AI-assisted coding has fundamentally transformed how I build software. After spending months deeply exploring and optimizing my workflow with tools like Cursor IDE and Claude Code, I've compiled the essential techniques that have multiplied my productivity while preserving my fundamental coding skills.
+
+## The Context Window Game-Changer
+
+Understanding context windows is crucial for maximizing AI coding efficiency.
+
+Cursor's implementation of Claude 3.7 Sonnet offers approximately 48K tokens in standard mode, while Max mode provides a massive 200K token context window (though at additional cost of $0.05 per prompt and per tool call).
+
+For reference:
+
+- A typical 200-line React component consumes about **1,500 tokens**
+- A Python file of similar length requires approximately **1,700 tokens**
+
+This means you can comfortably fit multiple files within the standard context window, but should be strategic about which files you include.
+
+**The golden rule:** keep individual files under 400 lines whenever possible, and break larger files into modules with clear responsibilities. For more complex projects/files/objects aim for less than 1k lines.
+
+## Smart Context Management Techniques
+
+The single technique that transformed my Cursor workflow was learning to strategically manage context.
+
+Close all editor tabs first, then open only the most relevant files before adding them all to context using the slash (/) menu → "Reference Open Editors". This provides the AI with precisely the information it needs without overwhelming the context window.
+
+For large codebases, create a dedicated `/docs/ai` folder containing files that explain your:
+
+- Architecture approach
+- Coding standards
+- Component patterns
+- State management philosophy
+- API conventions
+- Testing strategy
+
+The AI will reference these documents automatically when generating code, ensuring consistency across your entire codebase.
+
+## The Power of .cursor/rules
+
+One of Cursor's most underutilized features is the `.cursor/rules` file, which provides specific project rules that Cursor AI will follow when generating code. This is incredibly powerful for maintaining consistency.
+
+Here's an example `.cursor/rules` file I use for React projects:
+
+```
+UI and Styling:
+- Use Shadcn UI and Tailwind for components and styling
+- Implement mobile-first responsive design
+- Prefer function components over class components
+- Use CSS modules for component-specific styles
+
+Performance:
+- Minimize 'use client' directives
+- Favor React Server Components
+- Wrap client components in Suspense with fallback
+- Use dynamic loading for non-critical components
+- Optimize images with next/image
+
+Architecture:
+- Use the repository pattern for data access
+- Implement clean architecture with clear separation of concerns
+- Keep components under 150 lines
+- Extract complex logic to custom hooks
+```
+
+This ensures the AI consistently applies your preferred patterns and best practices without you having to repeat the same instructions.
+
+## @Docs Feature
+
+Cursor's @Docs feature is a game-changer for maintaining flow and improving AI code quality. This powerful capability lets you integrate external documentation directly into your AI interactions without constant context switching.
+
+The process is simple: provide a documentation link, Cursor indexes it, and you can reference it by typing @Doc or the document's name in your prompts. This keeps you focused on coding rather than tab-switching for reference material.
+
+### Quick Setup Guide
+
+1. **Add documentation:** Type @ in Chat or Composer, select "Docs," enter a URL, and give it a name (e.g., "TensorFlow").
+
+2. **Use in prompts:** Reference documentation with @Name syntax: "Implement a custom loss function using @TensorFlow documentation."
+
+3. **Manage sources:** Find all documentation under Settings > Features > Docs. Cursor automatically re-indexes these periodically as they change.
+
+---
+
+Still refining this workflow. The tools keep getting better, and so does the output.
