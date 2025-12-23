@@ -1,0 +1,82 @@
+---
+title: 'MEV Bots and the Dark Forest'
+date: '2024-12-23'
+tags: ['Ethereum', 'MEV', 'Smart Contracts', 'Security']
+draft: false
+summary: 'What I learned building arbitrage bots and discovering just how deep the MEV rabbit hole goes.'
+---
+
+I've been building bots to arbitrage profitable function calls on smart contracts. I knew MEV existed—I've seen their addresses in action dozens of times.
+
+What I didn't know is the depth of their operations, and how shallow my understanding of what they exploit really was.
+
+## How Bots Compete
+
+It's fascinating how bots compete against each other to claim profitable transactions in a public mempool.
+
+They do this by increasing the fee paid per unit of gas:
+
+- **Reactively** — checking what the last bot bid and bidding more
+- **Blindly** — increasing the bid by a static amount every X seconds
+
+Over time, this drives fees so high the transaction becomes unprofitable. The miner wins, everyone else loses.
+
+So instead, with no formal agreements, bots begin to bid the minimum extra amount the network allows. Leaving it to chance. Reducing gas fees paid to miners.
+
+Game theory in action.
+
+## Sophistication Levels
+
+Looking at advanced bots like `0xC0ffeEBABE5D496B2DDE509f9fa189C25cF29671` (c0ffeebabe.eth) reveals a different level of discipline.
+
+These sophisticated MEV hunters don't just use simple frontrunning. They employ complex smart contracts with:
+
+- Multi-layered obfuscation techniques
+- Transient storage to hide strategy details
+- Dynamic code execution paths
+- Complex gatekeeping mechanisms
+- WETH manipulation capabilities
+- Miner incentivization for better transaction ordering
+
+The level of sophistication is mind-blowing. Examining their bytecode reveals handcrafted assembly specifically built to avoid detection, competition, and disruption.
+
+## Flashbots Isn't Enough
+
+While improving my bots, I reached for Flashbots—a promising solution to MEV extraction. But it doesn't prevent it completely.
+
+These same bots monitor not just public mempools, but mined blocks and all transactions within.
+
+This allows bots to re-simulate transactions and uncover patterns over time. I've seen this myself when a profitable transaction from over a day before was copied and resubmitted once found to be profitable again.
+
+The machine learning angle is interesting. Advanced MEV operators use pattern recognition to build predictive models that anticipate profitable opportunities before they even appear in the mempool.
+
+## No Easy Defenses
+
+Basic protection mechanisms like token ownership requirements fail because of addresses like `0x3d782C0C69101358a8267Ba116c86726fDF35F91`, which take flashloans of tokens to bypass these checks.
+
+This challenges all contracts implementing profitable open transaction calls. The [Ethereum is a Dark Forest](https://www.paradigm.xyz/2020/08/ethereum-is-a-dark-forest) article by Paradigm outlines this well using CryptoKitties as an example.
+
+## Solutions: Fight Fire with Fire
+
+One approach: disallow this behavior at the protocol level. But given humans can't build perfect systems, other exploits will be found and consolidated.
+
+Another: make it simply unprofitable.
+
+These bots are dangerous but blind. Their operators analyze mistakes over time, but that's wasted effort.
+
+One well-crafted script can confuse thousands of bots for days. It's reasonable to build a system where blind bots can't profit in a sea of millions of unprofitable-looking-but-profitable transactions. Only specialized, knowledge-driven bots will win.
+
+## Practical Defenses for Contract Designers
+
+Smart contract designers need to implement:
+
+- **Time-locked execution mechanisms** — delay between intent and execution
+- **Commit-reveal patterns** — hide transaction details until execution
+- **Strategic honeypot transactions** — poison the well for blind bots
+- **Unpredictable execution paths** — make simulation expensive or unreliable
+
+The MEV landscape is evolving quickly. Understanding these predators is essential to designing systems that maintain economic integrity while discouraging exploitative extraction.
+
+---
+
+Still building. Still learning. The dark forest is deeper than I thought.
