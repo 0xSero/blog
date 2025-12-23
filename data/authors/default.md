@@ -4,7 +4,7 @@ avatar: /static/images/avatar.png
 occupation: Builder
 company: Sybil Solutions
 email: admin@serotonindesigns.com
-twitter: https://twitter.com/0x_Sero
+twitter: https://x.com/0xSero
 linkedin: https://www.linkedin.com/in/sero-346b85202/
 github: https://github.com/0xSero
 ---

@@ -190,7 +190,7 @@ export default function About() {
         <SlideUp delay={0.1}>
           <div className="mt-8 flex justify-center gap-5 sm:mt-10 sm:gap-6">
             <SocialIcon kind="github" href="https://github.com/0xSero" size="6" />
-            <SocialIcon kind="twitter" href="https://twitter.com/0x_Sero" size="6" />
+            <SocialIcon kind="twitter" href="https://x.com/0xSero" size="6" />
             <SocialIcon kind="mail" href="mailto:admin@serotonindesigns.com" size="6" />
             <SocialIcon
               kind="linkedin"
