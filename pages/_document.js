@@ -5,6 +5,7 @@ class MyDocument extends Document {
       <Html lang="en" className="scroll-smooth">
         <Head>
           <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
+          <link rel="icon" type="image/svg+xml" href="/static/favicons/favicon.svg" />
           <link
             rel="icon"
             type="image/png"

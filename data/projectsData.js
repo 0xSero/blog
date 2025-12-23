@@ -1,91 +1,184 @@
 const projectsData = [
+  // Open Source AI/ML Tools
+  {
+    title: 'AI Data Extraction Toolkit',
+    description:
+      'Extract conversation histories from Claude Code, Cursor, Codex, Windsurf, and Trae for ML training and analysis.',
+    imgSrc: '/static/images/ai-extraction.png',
+    href: 'https://github.com/0xSero/ai-data-extraction',
+    tags: ['AI', 'Python', 'Open Source'],
+  },
+  {
+    title: 'Open Orchestra',
+    description:
+      'Multi-agent orchestration plugin with hub-and-spoke architecture, Neo4j memory, and 22+ tool APIs for worker coordination.',
+    imgSrc: '/static/images/open-orchestra.png',
+    href: 'https://github.com/0xSero/open-orchestra',
+    tags: ['AI', 'Agents', 'TypeScript'],
+  },
+  {
+    title: 'Azul',
+    description:
+      'Terminal-based web browser in Rust with AI chat integration, multi-engine search, and tool-calling for hands-free browsing.',
+    imgSrc: '/static/images/azul.png',
+    href: 'https://github.com/0xSero/Azul',
+    tags: ['Rust', 'TUI', 'AI'],
+  },
+  {
+    title: 'Mem-Layer',
+    description:
+      'Graph-based AI memory system with scoped isolation, temporal awareness, and MCP server support for persistent context.',
+    imgSrc: '/static/images/mem-layer.png',
+    href: 'https://github.com/0xSero/mem-layer',
+    tags: ['AI', 'Graphs', 'Python'],
+  },
+  {
+    title: 'Browser-AI (Azzta Agent)',
+    description:
+      'Chrome extension for AI-driven browser automation with orchestrator mode, vision support, and safety guardrails.',
+    imgSrc: '/static/images/browser-ai.png',
+    href: 'https://github.com/0xSero/browser-ai',
+    tags: ['AI', 'Chrome', 'Automation'],
+  },
+  {
+    title: 'MiniMax-M2 Proxy',
+    description:
+      'Translation proxy enabling 229B MoE models to work with OpenAI/Anthropic SDKs with interleaved thinking support.',
+    imgSrc: '/static/images/minimax-proxy.png',
+    href: 'https://github.com/0xSero/minimax-m2-proxy',
+    tags: ['AI', 'LLM', 'Python'],
+  },
+  {
+    title: 'Codex Local',
+    description:
+      'Fork of OpenAI Codex CLI with multi-agent orchestration, parallel tool execution, and local LLM support.',
+    imgSrc: '/static/images/codex-local.png',
+    href: 'https://github.com/0xSero/codex-local',
+    tags: ['AI', 'Rust', 'Agents'],
+  },
+  {
+    title: 'Home RAG',
+    description:
+      'Knowledge graph RAG system combining vector embeddings with Neo4j for semantic search and multi-hop reasoning.',
+    imgSrc: '/static/images/home-rag.png',
+    href: 'https://github.com/0xSero/home-rag',
+    tags: ['AI', 'RAG', 'Python'],
+  },
+
+  // Major Open Source Contributions
+  {
+    title: 'ElizaOS',
+    description:
+      'Core contributor: led Biome migration, resolved linting issues, improved startup configuration. 17k+ stars.',
+    imgSrc: '/static/images/elizaos.png',
+    href: 'https://github.com/elizaOS/eliza',
+    tags: ['AI', 'Agents', 'Contributor'],
+  },
+  {
+    title: 'Synpress',
+    description:
+      'Contributor: MetaMask wait functions, race condition fixes, CI improvements for Web3 E2E testing.',
+    imgSrc: '/static/images/synpress.jpg',
+    href: 'https://github.com/synpress-io/synpress',
+    tags: ['Testing', 'E2E', 'Contributor'],
+  },
+
+  // Client Work & Collaborations
   {
     title: 'ZKSync - Governance RSS',
     description:
-      'A monitor for on-chain governance activity, which turns events to RSS items.',
+      'Real-time governance event monitor handling 80k-160k daily RPC calls, turning on-chain activity into RSS feeds.',
     imgSrc: '/static/images/zksync.png',
     href: 'https://feed.zknation.io/',
+    tags: ['Governance', 'ZKSync', 'Infrastructure'],
   },
   {
-    title: 'ElizaOS',
-    description: `Contributor to the leading Open Source AI agent framework`,
-    imgSrc: '/static/images/elizaos.png',
-    href: 'https://www.elizaos.ai/',
-  },
-  {
-    title: 'Ethereum Foundation - PSE',
+    title: 'Ethereum Foundation - IVCNotes',
     description:
-      'Research and Development grantee, focused on ZK-protocols and next billion efforts.',
+      'Privacy-preserving digital notes using ZK proofs, IVC, and MPC for the PSE research team.',
     imgSrc: '/static/images/ef.png',
     href: 'https://ethereum.foundation/',
-  },
-  {
-    title: 'Ethers Club (formerly Decentra Talks)',
-    description: `Join me in my journey talking to incredible people.`,
-    imgSrc: '/static/images/EthersClub.png',
-    href: 'https://podcast.ethers.club',
+    tags: ['ZK', 'Research', 'Rust'],
   },
   {
     title: 'Gitcoin',
-    description:
-      'Research and Development for cross chain donations, and LTIP a new grant mechanism.',
+    description: 'Research and development for cross-chain donations and LTIP grant mechanisms.',
     imgSrc: '/static/images/gitcoin.png',
     href: 'https://gitcoin.co',
+    tags: ['Grants', 'Cross-chain', 'Research'],
   },
   {
     title: 'POKT Network',
     description:
-      'Website development and modernisation, CMS development, data migration, research.',
+      'Website modernization, CMS development, data migration, and infrastructure research.',
     imgSrc: '/static/images/pokt.jpg',
     href: 'https://pokt.network',
+    tags: ['Infrastructure', 'Web', 'CMS'],
+  },
+
+  // DeFi & Web3 Tools
+  {
+    title: 'Deploy SuperToken',
+    description: 'One-click UI for deploying Superfluid supertokens from any ERC20 on any network.',
+    imgSrc: '/static/images/supertoken.png',
+    href: 'https://github.com/0xSero/deploy-supertoken',
+    tags: ['DeFi', 'Superfluid', 'React'],
   },
   {
-    title: 'Synpress',
-    description: `Development of Synpress libraries, and writing documentation for the web3 e2e testing Framework.`,
-    imgSrc: '/static/images/synpress.jpg',
-    href: 'https://docs.synpress.io/',
-  },
-  {
-    title: 'Superfluid Finance',
-    description: `Superfluid Console is an explorer meant for developers and advanced users of the Superfluid Protocol.`,
+    title: 'Superfluid Console',
+    description:
+      'Developer explorer for the Superfluid Protocol with advanced querying and analytics.',
     imgSrc: '/static/images/superfluid.png',
     href: 'https://console.superfluid.finance',
+    tags: ['DeFi', 'Explorer', 'TypeScript'],
   },
   {
-    title: 'Tellor Finance',
-    description: `Decentralised onchain tipping and reporting system for token data feeds.`,
+    title: 'Sequencer Monitor',
+    description:
+      'MakerDAO sequencer monitoring with Discord alerts for workable jobs across networks.',
+    imgSrc: '/static/images/sequencer.png',
+    href: 'https://github.com/0xSero/Sequencer-Monitor',
+    tags: ['MakerDAO', 'Monitoring', 'TypeScript'],
+  },
+  {
+    title: 'Tellor Finance - Fund a Feed',
+    description: 'Decentralized on-chain tipping and reporting system for oracle data feeds.',
     imgSrc: '/static/images/tellor.png',
     href: 'https://fundafeed.herokuapp.com/',
+    tags: ['Oracle', 'DeFi', 'React'],
+  },
+
+  // Media & Community
+  {
+    title: 'Ethers Club Podcast',
+    description: 'Conversations with builders, researchers, and thinkers across crypto and AI.',
+    imgSrc: '/static/images/EthersClub.png',
+    href: 'https://podcast.ethers.club',
+    tags: ['Podcast', 'Community', 'Media'],
+  },
+
+  // Earlier Projects
+  {
+    title: 'Metagame',
+    description:
+      'MetaOS - an open-source framework for running decentralized societies and coordination.',
+    imgSrc: '/static/images/metagame.png',
+    href: 'https://metagame.wtf/',
+    tags: ['DAO', 'Coordination', 'TypeScript'],
   },
   {
     title: 'Alluo Finance',
-    description: `DCA and earn yield while you Hodl your crypto, in our trustless and decentralised dApp.`,
+    description: 'DCA and yield optimization in a trustless, decentralized application.',
     imgSrc: '/static/images/alluo.jpg',
     href: 'https://app.alluo.finance/',
-  },
-  {
-    title: 'Metagame',
-    description: `The platform that MetaGame will be played on aka MetaOS - an open source framework for running decentralized societies.`,
-    imgSrc: '/static/images/metagame.png',
-    href: 'https://metagame.wtf/',
+    tags: ['DeFi', 'Yield', 'React'],
   },
   {
     title: 'DebtDAO',
-    description: `Revenue based collateralized borrowing and lending on Ethereum Mainnet.`,
+    description: 'Revenue-based collateralized borrowing and lending on Ethereum Mainnet.',
     imgSrc: '/static/images/debt-dao.png',
     href: 'https://debtdao.finance/',
-  },
-  {
-    title: 'Crypto Price Scraper',
-    description: `Scrape the prices of Cryptocurrencies from any platform.`,
-    imgSrc: '/static/images/puppeteer.jpg',
-    href: 'https://github.com/Seroxdesign/crypto-price-scraper',
-  },
-  {
-    title: 'Decentra',
-    description: `Imbedding Safe in familiar experiences, an online financial management chat app.`,
-    imgSrc: '/static/images/decentra-app.png',
-    href: 'https://web-core-swart.vercel.app/chat',
+    tags: ['DeFi', 'Lending', 'Ethereum'],
   },
 ]
 

@@ -1,0 +1,198 @@
+---
+title: 'AI Coding Assistant Training Data Extraction Toolkit'
+client: 'Open Source Project'
+date: '2025-11-16'
+summary: 'A Python toolkit for extracting conversation histories, code contexts, and metadata from popular AI coding assistants for ML training and analysis.'
+tags: ['AI', 'Python', 'Open Source', 'Developer Tools']
+images: ['/static/images/case-studies/ai-extraction.png']
+featured: true
+metrics:
+  - label: 'GitHub Stars'
+    value: '121+'
+  - label: 'Forks'
+    value: '14'
+  - label: 'Tools Supported'
+    value: '6'
+---
+
+## Overview
+
+The **AI Coding Assistant Training Data Extraction Toolkit** is an open-source project that automatically discovers and extracts conversation histories, code contexts, and metadata from popular AI coding assistants.
+
+Built for machine learning researchers, developers, and teams who want to understand or train on their own AI coding interactions, this toolkit provides a unified interface across multiple platforms.
+
+**Repository:** [github.com/0xSero/ai-data-extraction](https://github.com/0xSero/ai-data-extraction)
+
+## The Problem
+
+AI coding assistants have become essential to modern development workflows. But the data they generate—your prompts, the AI's responses, code diffs, tool executions—is locked away in platform-specific formats:
+
+- **SQLite databases** with undocumented schemas
+- **JSONL session files** scattered across directories
+- **Version-specific storage** that changes with each update
+
+Researchers and teams who want to:
+
+- Fine-tune models on their own coding patterns
+- Audit AI interactions for security or compliance
+- Analyze productivity and workflow optimization
+- Build custom tooling on top of conversation data
+
+...were left manually reverse-engineering each tool.
+
+## Solution
+
+The toolkit provides **zero-dependency extraction** across the most popular AI coding assistants:
+
+### Supported Platforms
+
+| Platform           | Storage Format | Versions Supported  |
+| ------------------ | -------------- | ------------------- |
+| **Claude Code**    | JSONL sessions | All versions        |
+| **Claude Desktop** | JSONL          | All versions        |
+| **Cursor**         | SQLite + JSONL | v0.43 through v2.0+ |
+| **Codex**          | JSONL          | All versions        |
+| **Trae**           | SQLite         | All versions        |
+| **Windsurf**       | JSONL          | All versions        |
+| **Continue AI**    | SQLite         | All versions        |
+
+### Key Features
+
+**Auto-Discovery**
+
+- Identifies installations across macOS, Linux, and Windows
+- Handles version-specific storage locations automatically
+- No manual configuration required for standard setups
+
+**Complete Context Extraction**
+
+- User messages and AI responses
+- Code diffs and suggested edits
+- Multi-file contexts with line numbers and paths
+- Tool use and execution results
+- Timestamps and conversation metadata
+
+**Clean Output**
+
+- Organized, timestamped JSONL files
+- Consistent schema across all platforms
+- Ready for downstream ML training pipelines
+
+## Technical Implementation
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Auto-Discovery                        │
+│  Scans OS-specific paths for AI assistant installations │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                  Platform Adapters                       │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       │
+│  │ Claude  │ │ Cursor  │ │  Codex  │ │Windsurf │  ...  │
+│  │ Adapter │ │ Adapter │ │ Adapter │ │ Adapter │       │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘       │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│               Unified Data Model                         │
+│  Conversation → Messages → Code Context → Metadata      │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                 JSONL Output                             │
+│  Timestamped, organized files for ML pipelines          │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Design Principles
+
+**Zero Dependencies**
+
+- Python 3.6+ standard library only
+- No pip install, no virtual environment headaches
+- Works immediately on any system with Python
+
+**Defensive Parsing**
+
+- Handles corrupted or incomplete session data gracefully
+- Version detection for format migrations (especially Cursor v0.x → v2.x)
+- Clear error messages when data can't be extracted
+
+**Privacy-Aware**
+
+- Outputs to local files only—no network calls
+- Documentation emphasizes secret scanning before use
+- Clear warnings about proprietary code in extracted data
+
+## Challenges Overcome
+
+### Cursor's Evolving Storage
+
+Cursor changed storage formats significantly between versions:
+
+- **v0.43–1.x**: SQLite with specific table structures
+- **v2.0+**: Hybrid JSONL + SQLite approach
+
+The toolkit detects the installed version and applies the correct extraction logic automatically.
+
+### Cross-Platform Path Resolution
+
+AI assistants store data in wildly different locations:
+
+- **macOS**: `~/Library/Application Support/...`
+- **Linux**: `~/.config/...` or `~/.local/share/...`
+- **Windows**: `%APPDATA%\...`
+
+Auto-discovery handles all three platforms with a unified interface.
+
+### Incomplete Session Data
+
+Users frequently have partial sessions—interrupted conversations, crashed processes, or migrations between machines. The toolkit:
+
+- Extracts what's available without failing
+- Reports skipped entries with clear context
+- Produces valid output even from corrupted inputs
+
+## Results
+
+### Community Adoption
+
+- **121+ GitHub stars** within weeks of release
+- **14 forks** with active community contributions
+- Used by ML researchers, productivity analysts, and developer tool builders
+
+### Use Cases Enabled
+
+1. **Fine-tuning**: Teams training models on their own coding patterns
+2. **Workflow Analysis**: Understanding how developers interact with AI assistants
+3. **Compliance Auditing**: Reviewing AI interactions for sensitive data exposure
+4. **Tool Building**: Creating custom dashboards and analytics on top of conversation data
+
+## Lessons Learned
+
+1. **Zero-dependency pays off** – Friction kills adoption. A single Python file that "just works" spreads faster than a full package with requirements.
+
+2. **Version detection is essential** – Tools evolve quickly. Building in version awareness from day one saved countless support issues.
+
+3. **Privacy documentation matters** – Being explicit about what data is extracted and how to handle it built trust with cautious users.
+
+4. **Community contributions scale** – Open-sourcing the adapter pattern let the community add support for tools faster than any single developer could.
+
+## Future Directions
+
+- **Real-time sync**: Stream new conversations as they happen
+- **Anonymization utilities**: Built-in PII scrubbing for safer sharing
+- **Analysis dashboards**: Visualizations for productivity patterns
+- **Additional platforms**: VS Code Copilot, JetBrains AI, and others
+
+---
+
+This project reflects a core principle in 0xSero's work: **find the friction, remove it, and make the tool disappear**. When extracting AI coding data is as simple as running a Python script, researchers and teams can focus on what they're actually trying to build.
+
+Explore the code: [github.com/0xSero/ai-data-extraction](https://github.com/0xSero/ai-data-extraction)

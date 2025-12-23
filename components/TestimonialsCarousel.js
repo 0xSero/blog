@@ -3,24 +3,31 @@ import { useState, useEffect } from 'react'
 const testimonials = [
   {
     quote:
-      'Sybil Solutions delivered exactly what we needed. Their expertise in AI development transformed our operations.',
-    author: 'Alex Chen',
-    role: 'CTO, TechVentures',
-    company: 'TechVentures Inc.',
+      "Sybil Solutions brings a powerful blend of talent, integrity, and genuine curiosity. When they take on a task you can relax, knowing that they'll see it through to completion to the highest standards. I recommend them without a heartbeat's hesitation.",
+    author: 'Adrienne',
+    role: 'CMO',
+    company: 'Gnosis',
   },
   {
     quote:
-      "The team's deep understanding of blockchain and frontend development made our project a success.",
-    author: 'Sarah Mitchell',
+      'Sybil Solutions are the kind of builders that constantly think multiple steps ahead, identifying issues before they become issues. They take ownership, require no handholding and are a pleasure to work with.',
+    author: 'Peter',
+    role: 'CEO',
+    company: 'NextMeta',
+  },
+  {
+    quote:
+      "Working with Sybil Solutions was a pleasure. They delivered a website that met and exceeded our expectations. What impressed me most was their collaborative mindset and ability to work out detailed solutions for complex problems we couldn't solve. Great quality work with very talented and thorough professionals.",
+    author: 'Jarrod Frankel',
     role: 'Founder',
-    company: 'DeFi Labs',
+    company: 'Pangea',
   },
   {
     quote:
-      'Professional, responsive, and technically brilliant. They exceeded our expectations at every turn.',
-    author: 'Marcus Johnson',
-    role: 'Product Manager',
-    company: 'Innovation Hub',
+      "Sybil Solutions' unwavering passion is nothing short of contagious. They approach every project with an intensity that inspires everyone around them. Their remarkable ability to transform vision into reality, coupled with their get-it-done attitude, makes them an unstoppable force who consistently deliver exceptional results.",
+    author: 'Sayo',
+    role: 'Lead Software Developer',
+    company: '',
   },
 ]
 
@@ -30,25 +37,28 @@ export default function TestimonialsCarousel() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
+    }, 6000)
     return () => clearInterval(timer)
   }, [])
+
+  const testimonial = testimonials[current]
 
   return (
     <div className="relative mx-auto max-w-3xl">
       <div className="divider-asymmetric relative p-8 md:p-12">
         <div className="transition-opacity duration-500" key={current}>
-          <blockquote className="mb-6 text-xl text-text-primary md:text-2xl">
-            "{testimonials[current].quote}"
+          <blockquote className="mb-6 text-lg text-text-primary md:text-xl">
+            "{testimonial.quote}"
           </blockquote>
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-inset text-accent-subtle">
-              {testimonials[current].author.charAt(0)}
+              {testimonial.author.charAt(0)}
             </div>
             <div>
-              <div className="font-semibold text-text-primary">{testimonials[current].author}</div>
+              <div className="font-semibold text-text-primary">{testimonial.author}</div>
               <div className="text-sm text-text-secondary">
-                {testimonials[current].role}, {testimonials[current].company}
+                {testimonial.role}
+                {testimonial.company && `, ${testimonial.company}`}
               </div>
             </div>
           </div>

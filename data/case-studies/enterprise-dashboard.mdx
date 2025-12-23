@@ -15,153 +15,91 @@ metrics:
     value: '~5 min'
 ---
 
-## Project Overview
+## Problem
 
-The **ZKSync & Ethereum Governance Event Monitor** project created a transparent, scalable monitoring system for governance events on **ZKSync Era** and **Ethereum Mainnet**.
+The ZKSync & Ethereum Governance Event Monitor project aimed to create a transparent, scalable, and efficient monitoring system for governance-related events on ZKSync Era and Ethereum Mainnet. By transforming blockchain events into structured RSS feeds, this solution provides stakeholders and developers with accessible and real-time insights into governance activities.
 
-By transforming low-level blockchain events into structured RSS feeds, stakeholders and developers get **real-time, human-readable insight** into governance activity—without having to run their own indexers.
-
-This was delivered in a **one‑month sprint**, with implementation support from **ScopeLift**.
+The collaboration with ScopeLift ensured a robust design and seamless implementation within a tight one-month timeline, leveraging cutting-edge technologies and best practices for scalable, cloud-based deployments.
 
 ## Objectives
 
-1. **Governance Event Tracking** – Capture proposal creation, execution, cancellation, and core admin changes.
-2. **RSS Feed Integration** – Present events as easy‑to‑consume, continuously updated RSS feeds.
-3. **Scalable & Reliable Architecture** – Use GCP + Docker for predictable, cloud‑native deployment.
-4. **Transparent Monitoring** – Keep structured historical archives so past events stay discoverable.
+1. **Governance Event Tracking**: Capture and process governance-related blockchain events, including proposal creation, execution, cancellation, and administrative changes.
+2. **RSS Feed Integration**: Present event data through user-friendly, regularly updated RSS feeds.
+3. **Scalable and Reliable Architecture**: Utilize Google Cloud Platform (GCP) and Docker for deployment, ensuring scalability and reliability.
+4. **Transparent Monitoring**: Provide structured and archived historical data for long-term accessibility.
 
-## System Architecture
+## Solution
 
-The system is composed of blockchain listeners, processing services, storage, and a lightweight front-end.
-
-```mermaid
-graph TB
-    subgraph Blockchain Networks
-        ETH[Ethereum Mainnet]
-        ZK[ZKSync Era]
-    end
-
-    subgraph Backend Services
-        BP[Block Processor]
-        HP[Historical Processor]
-        RSS[RSS Generator]
-    end
-
-    subgraph Storage
-        GCS[Google Cloud Storage]
-        subgraph GCS Contents
-            SF[State Files]
-            RF[RSS Feeds]
-            AR[Archives]
-        end
-    end
-
-    subgraph Frontend
-        NJ[Next.js App]
-        UI[User Interface]
-    end
-
-    ETH --> BP
-    ZK --> BP
-    BP --> GCS
-    HP --> GCS
-    GCS --> RSS
-    RSS --> RF
-    RF --> NJ
-    NJ --> UI
-```
+The project utilized a modular, cloud-based architecture, encompassing blockchain networks, backend services, storage, and frontend components.
 
 ### Key Features
 
-- **Event Detection:** Batch processing of governance events for efficiency and resilience.
-- **RSS Feeds:** Human-friendly feeds for proposals, executions, cancellations, and admin changes.
-- **Scalability:** Designed for **150k+ daily RPC calls** across ZKSync Era and Ethereum.
+- **Event Detection**: Monitors and processes governance events in batches for efficiency.
+- **RSS Feed Updates**: Automatically generates and updates feeds with new events while archiving old entries for transparency.
+- **Scalability**: Supports large-scale RPC usage with over 150,000 daily calls across Ethereum Mainnet and ZKSync Era.
 
-## Core Functionalities
+### Core Functionalities
 
-### 1. Event Monitoring
+**1. Event Monitoring**
 
-- Tracks governance events like proposal creation, execution, cancellation, and role/admin updates.
-- Supports both **Ethereum Mainnet** and **ZKSync Era** with unified logic.
+- Captures governance-related events such as proposal creation, execution, and cancellations.
+- Supports multiple blockchains: Ethereum Mainnet and ZKSync Era.
 
-### 2. RSS Feed Integration
+**2. RSS Feed Integration**
 
-- Converts structured events into RSS feeds that **update automatically**.
-- Archives older entries so historical governance activity remains accessible.
+- RSS feeds allow users to track events in real-time.
+- Archived RSS entries ensure historical data remains accessible.
 
-### 3. Infrastructure
+**3. Infrastructure**
 
-- **Cloud Platform:** Google Cloud Platform for storage and processing.
-- **Containerization:** Docker images for reproducible deployments.
-- **Frontend:** Next.js app to surface feeds and status pages.
+- Cloud Platform: GCP for reliable and scalable storage.
+- Containerization: Docker for consistent deployment.
+- Frontend Framework: Next.js for user-facing interactions.
 
-## Challenges & Solutions
+## Challenges and Solutions
 
 ### Tight Timeline
 
-- **Challenge:** Shipping a production-ready monitor in **one month**.
-- **Solution:** A focused roadmap, daily syncs with ScopeLift, and early alignment on the “MVP that matters” ensured fast iteration without scope creep.
+**Challenge**: Completing the project within one month required efficient task allocation and rapid prototyping.
+
+**Solution**: A well-defined roadmap and daily syncs with ScopeLift ensured alignment and progress.
 
 ### High RPC Usage
 
-- **Challenge:** Handling high call volumes without hitting rate limits or exploding costs.
-- **Solution:** Batched requests, tuned polling intervals, and idempotent processing reduced load while maintaining freshness.
+**Challenge**: Balancing extensive RPC calls with network rate limits.
+
+**Solution**: Batch processing with optimized parameters reduced redundant calls while maintaining performance.
 
 ### Scalability
 
-- **Challenge:** Ensuring the system could scale as governance and usage grew.
-- **Solution:** Stateless workers + GCP storage allowed horizontal scaling and easy maintenance.
+**Challenge**: Ensuring scalability for increasing event volumes and user access.
+
+**Solution**: GCP's scalable storage and processing capabilities allowed seamless handling of large data volumes.
 
 ### Error Handling
 
-- **Challenge:** Dealing with transient and permanent errors from RPC providers.
-- **Solution:** Clear retry logic, backoff strategies, and logging/alerting pipelines to keep operators informed.
+**Challenge**: Managing transient and permanent errors in blockchain data retrieval.
+
+**Solution**: A robust error handling mechanism with retry logic and alerting ensured uninterrupted operation.
 
 ## Results
 
 1. **Functional Monitoring System**
 
-   - Real-time coverage of governance events on **Ethereum Mainnet** and **ZKSync Era**.
-   - Fresh RSS feeds and archived historical data for long-term transparency.
+   - Real-time event monitoring for Ethereum and ZKSync governance activities.
+   - Seamless RSS feed updates with archived data storage.
 
-2. **Scalable, Cloud-Native Architecture**
+2. **Scalable Architecture**
 
-   - GCP + Docker enable scaling to more chains or higher event volume with minimal friction.
+   - GCP and Docker ensured the system could handle high traffic and data volumes.
 
 3. **Stakeholder Value**
 
-   - Core contributors, delegates, and integrators get a **single source of truth** for governance events.
+   - Simplified tracking of governance events enhanced transparency and accessibility for developers and users.
 
-4. **Delivered On Time**
-   - All core features shipped within the one‑month window, with a clean handoff.
-
-## Technical Highlights
-
-- **Event Monitoring Rate:**
-  - ZKSync Era: **80,000–160,000 calls/day**
-  - Ethereum Mainnet: **5,000–10,000 calls/day**
-- **Error Handling:**
-  - Automatic retries for transient errors
-  - Detailed logs and alerts for persistent issues
-- **Performance:**
-  - Block processing latency: **< 1s per block**
-  - RSS updates roughly every **5 minutes**
-
-## Lessons Learned
-
-1. **Modular Design Wins** – Clean separation of the block processor, historical backfill, and RSS generator made iteration and debugging straightforward.
-2. **Cloud-Native by Default** – Leaning on GCP for storage and compute simplified deployment and scaling.
-3. **Collaboration Matters** – Working with ScopeLift brought in domain and governance best practices early.
-
-## Future Recommendations
-
-- **UI Enhancements:** Build richer dashboards for visualizing proposals, timelines, and actor actions.
-- **More Chains:** Extend to additional L2s and governance frameworks.
-- **Analytics:** Add trend analysis, activity heatmaps, and alerting.
-- **Community Education:** Publish guides and host workshops to help others build on similar patterns.
+4. **Efficient Development**
+   - Delivered on time with all features fully functional, showcasing effective collaboration and execution.
 
 ---
 
-This case study reflects how work from **0xSero** focuses on **transparent, production-grade blockchain infrastructure**—the kind of plumbing that quietly powers real governance and coordination.
-
-For more related infrastructure and experiments, see the public work on GitHub at https://github.com/0xSero and the Sybil Solutions site code at https://github.com/Seroxdesign.
+**Live**: [zkrss.com](https://feed.zknation.io/)

@@ -1,0 +1,169 @@
+---
+title: 'Azul – AI-Powered Terminal Web Browser'
+client: 'Open Source'
+date: '2025-01-15'
+summary: 'A terminal-based web browser written in Rust with integrated AI chat, tool-calling, and multi-engine search for hands-free browsing.'
+tags: ['Rust', 'TUI', 'AI', 'Open Source']
+images: ['/static/images/case-studies/azul.png']
+featured: true
+metrics:
+  - label: 'Language'
+    value: 'Rust (96%)'
+  - label: 'Search Engines'
+    value: '6 integrated'
+  - label: 'AI Providers'
+    value: 'OpenAI, Ollama, Custom'
+---
+
+## Background
+
+Azul started as an experiment: what if web browsing could happen entirely in the terminal, controlled by natural language? The result is a full TUI (Terminal User Interface) web browser that combines traditional keyboard navigation with an AI assistant capable of executing browsing commands.
+
+## Core Features
+
+### Terminal-First Browsing
+
+Azul renders web content in the terminal using Ratatui, with:
+
+- Full keyboard navigation for links, scrolling, and tab management
+- JavaScript rendering via headless Chrome when needed
+- Bookmarks and history persistence with SQLite
+- Dark cosmic theme optimized for terminal aesthetics
+
+### AI Chat Integration
+
+The AI panel supports natural language commands that translate to browser actions:
+
+- **Navigation**: "go to wikipedia.org" or "search for Rust programming"
+- **Interaction**: "click the first link" or "scroll down"
+- **Research**: "summarize this page" or "find information about X"
+
+The AI uses tool-calling to execute these actions within the browser context, making it possible to browse hands-free.
+
+### Multi-Engine Search
+
+Built-in search across six engines:
+
+1. **DuckDuckGo** – Privacy-focused general search
+2. **Wikipedia** – Direct encyclopedia queries
+3. **arXiv** – Academic paper search
+4. **PubMed** – Medical/scientific literature
+5. **Google Scholar** – Academic citations
+6. **OpenLibrary** – Book search
+
+Users can switch engines on the fly or let the AI choose based on query context.
+
+## Technical Architecture
+
+```
+┌─────────────────────────────────────┐
+│           Terminal UI (Ratatui)     │
+├─────────────┬───────────────────────┤
+│  Browser    │      AI Chat          │
+│  Panel      │      Panel            │
+├─────────────┴───────────────────────┤
+│         Core Engine (Rust)          │
+├─────────────┬───────────────────────┤
+│  Headless   │    AI Provider        │
+│  Chrome     │    (OpenAI/Ollama)    │
+├─────────────┴───────────────────────┤
+│         SQLite (Storage)            │
+└─────────────────────────────────────┘
+```
+
+### AI Provider Flexibility
+
+Azul supports multiple AI backends:
+
+- **OpenAI** – GPT-4 and GPT-3.5 via API
+- **OpenRouter** – Access to multiple models
+- **Ollama** – Local LLM execution for privacy
+- **Custom endpoints** – Any OpenAI-compatible API
+
+Configuration is handled via JSON, allowing users to switch providers without code changes.
+
+## Implementation Details
+
+### Tool-Calling System
+
+The AI assistant uses a structured tool-calling interface:
+
+```rust
+pub enum BrowserTool {
+    Navigate { url: String },
+    Search { query: String, engine: SearchEngine },
+    Click { selector: String },
+    Scroll { direction: ScrollDirection, amount: u32 },
+    ExtractText { selector: Option<String> },
+    Screenshot,
+}
+```
+
+When the AI decides to execute an action, it returns a tool call that the browser interprets and executes, then reports the result back for continued conversation.
+
+### Keyboard Shortcuts
+
+Power users can bypass AI entirely with extensive keybindings:
+
+- `g` – Go to URL
+- `/` – Search current page
+- `j/k` – Scroll up/down
+- `Tab` – Cycle through links
+- `Enter` – Follow link
+- `b` – Open bookmarks
+- `H` – View history
+- `t` – New tab
+
+### Optional RAG Integration
+
+For research workflows, Azul supports RAG (Retrieval-Augmented Generation):
+
+1. Index pages you visit into a local vector store
+2. Query your browsing history semantically
+3. Get AI responses grounded in pages you've read
+
+## Challenges Solved
+
+### Terminal Rendering
+
+Rendering web pages in a terminal is inherently lossy. Azul handles this by:
+
+- Stripping complex CSS while preserving semantic structure
+- Converting images to ASCII art or placeholder text
+- Maintaining link relationships for navigation
+
+### AI Latency
+
+To keep browsing responsive:
+
+- Tool calls execute immediately without waiting for full AI response
+- Streaming responses show progress in real-time
+- Local LLM option (Ollama) eliminates network latency
+
+### Cross-Platform Support
+
+Rust's cross-compilation made it straightforward to ship binaries for:
+
+- Linux x86_64
+- macOS x86_64
+- macOS ARM64 (Apple Silicon)
+
+## Results
+
+Azul demonstrates that terminal-based, AI-augmented browsing is not just possible but practical for certain workflows:
+
+- **Research**: Navigate academic papers hands-free while taking notes
+- **Accessibility**: Voice-to-text combined with AI commands enables hands-free browsing
+- **Privacy**: Local LLM option keeps all data on-device
+- **Efficiency**: Power users can browse faster than traditional GUI browsers
+
+## Future Directions
+
+- **Session sync** across devices
+- **Plugin system** for custom tools
+- **Voice input** integration
+- **Collaborative browsing** with shared sessions
+
+---
+
+Azul is open source and available at [github.com/0xSero/Azul](https://github.com/0xSero/Azul).

@@ -656,8 +656,46 @@ export default function Index() {
 
     const createPatternInstance = (width, height) => {
       const minDim = Math.min(width, height)
-      const clearRadius = minDim * activeConfig.clearRadius
-      return createPattern(activeConfig.key, width, height, activeConfig, clearRadius)
+      const isMobile = width < 640
+
+      // Mobile: use width-based layout since screen is tall and narrow
+      // Desktop: use minDim-based layout for balanced appearance
+      const mobileOverrides = {
+        metamorph: isMobile
+          ? {
+              // For mobile: larger center circle, eyes fill remaining space
+              eyeSpacing: 40,
+              ringSpacing: 28,
+              ringCount: 20,
+              edgePadding: 4,
+              eyeScale: 0.5,
+              clearRadius: 0.95, // Almost full screen width
+            }
+          : {
+              // Desktop: original balanced look
+              eyeSpacing: 50,
+              ringSpacing: 42,
+              ringCount: 12,
+              edgePadding: 14,
+              eyeScale: 0.9,
+            },
+        life: {
+          golGridSize: isMobile ? 8 : 12,
+        },
+        tri: {},
+      }
+
+      const patternConfig = {
+        ...activeConfig,
+        ...(mobileOverrides[activeConfig.key] || {}),
+      }
+
+      // For mobile: 45% of width as radius = 90% of screen width as diameter
+      // For desktop: use minDim-based calculation
+      const clearRadius = isMobile
+        ? width * 0.45
+        : minDim * (patternConfig.clearRadius || activeConfig.clearRadius)
+      return createPattern(activeConfig.key, width, height, patternConfig, clearRadius)
     }
 
     const resize = () => {
@@ -677,13 +715,19 @@ export default function Index() {
     resize()
     window.addEventListener('resize', resize)
 
+    // Store clearRadius from pattern creation for use in animate
+    let storedClearRadius = 0
+
     const animate = (currentTime) => {
       const width = canvas.width / canvasScale
       const height = canvas.height / canvasScale
       const centerX = width / 2
       const centerY = height / 2
-      const minDim = Math.min(width, height)
-      const clearRadius = minDim * activeConfig.clearRadius
+      const isMobile = width < 640
+      // Use mobile-specific clearRadius calculation
+      const clearRadius = isMobile
+        ? width * 0.45
+        : Math.min(width, height) * activeConfig.clearRadius
 
       // Calculate cycle time (t in 0..1) - loops continuously
       const elapsed = currentTime - startTime
@@ -742,7 +786,7 @@ export default function Index() {
       >
         {/* Title */}
         <h1
-          className={`relative z-10 mb-4 text-4xl font-bold tracking-tight transition-all duration-1000 md:text-6xl ${
+          className={`relative z-10 mb-2 text-3xl font-bold tracking-tight transition-all duration-1000 sm:mb-4 sm:text-4xl md:text-6xl ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
           style={{
@@ -757,7 +801,7 @@ export default function Index() {
         <button
           onClick={handleEnter}
           onKeyPress={handleKeyPress}
-          className={`group relative z-10 mt-8 overflow-hidden border-2 px-8 py-3 text-lg font-medium transition-all duration-1000 ${
+          className={`group relative z-10 mt-6 overflow-hidden border-2 px-6 py-2.5 text-base font-medium transition-all duration-1000 sm:mt-8 sm:px-8 sm:py-3 sm:text-lg ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
           style={{
@@ -778,7 +822,7 @@ export default function Index() {
 
         {/* Tagline */}
         <p
-          className={`relative z-10 mt-6 text-sm tracking-widest transition-all duration-1000 ${
+          className={`relative z-10 mt-4 text-xs tracking-widest transition-all duration-1000 sm:mt-6 sm:text-sm ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
           style={{

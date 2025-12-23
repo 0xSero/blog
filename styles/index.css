@@ -194,6 +194,26 @@ input:-webkit-autofill {
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
 }
 
+/* ============================================
+   SCROLLING ANIMATION
+   ============================================ */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
 /* Penrose triangle inspired border */
 .penrose-border {
   position: relative;
