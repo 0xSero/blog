@@ -1,33 +1,53 @@
+/* ============================================
+   MAIN STYLESHEET ENTRY
+   Import order matters: tokens → base → components → utilities
+   ============================================ */
+
+/* Design System Tokens (must be first for CSS variable definitions) */
+@import './design-system/tokens.css';
+
+/* Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Japanese Minimalism utilities */
+@import './design-system/japanese-minimalism.css';
+
 /* Geist Font Import */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ============================================
+   BASE LAYER
+   ============================================ */
 @layer base {
   html {
     @apply scroll-smooth;
   }
 
   body {
-    @apply bg-dark-bg text-paper-dark-text;
+    background-color: var(--color-surface-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-sans);
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
   ::selection {
     background-color: hsl(35, 15%, 30%);
-    color: hsl(40, 20%, 92%);
+    color: var(--color-text-primary);
   }
 
   /* Focus ring styles - warm brown */
   *:focus-visible {
     @apply outline-none ring-2 ring-offset-2;
-    ring-color: hsl(35, 15%, 70%);
-    ring-offset-color: hsl(30, 5%, 10.5%);
+    --tw-ring-color: var(--color-interactive-default);
+    --tw-ring-offset-color: var(--color-surface-base);
   }
 }
 
+/* ============================================
+   MARKDOWN / PROSE UTILITIES
+   ============================================ */
 .task-list-item::before {
   @apply hidden;
 }
@@ -37,7 +57,8 @@
 }
 
 .footnotes {
-  @apply mt-12 border-t border-dark-border pt-8;
+  @apply mt-12 pt-8;
+  border-top: 1px solid var(--color-border-default);
 }
 
 .csl-entry {
@@ -52,18 +73,20 @@
   overflow: hidden;
 }
 
-/* Custom scrollbar - warm paper theme */
+/* ============================================
+   CUSTOM SCROLLBAR - Warm paper theme
+   ============================================ */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: hsl(30, 5%, 10.5%);
+  background-color: var(--color-surface-base);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: hsl(30, 5%, 25%);
+  background-color: var(--color-border-strong);
   border-radius: 9999px;
 }
 
@@ -71,18 +94,22 @@
   background-color: hsl(30, 5%, 35%);
 }
 
-/* Autofill styling for dark theme */
+/* ============================================
+   FORM AUTOFILL - Dark theme compatible
+   ============================================ */
 input:-webkit-autofill,
 input:-webkit-autofill:focus {
   transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 input:-webkit-autofill {
-  -webkit-text-fill-color: hsl(40, 20%, 92%);
-  -webkit-box-shadow: 0 0 0px 1000px hsl(30, 5%, 10.5%) inset;
+  -webkit-text-fill-color: var(--color-text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-surface-base) inset;
 }
 
-/* Escher-inspired utility classes */
+/* ============================================
+   ESCHER UTILITIES (kept for portal page)
+   ============================================ */
 @layer utilities {
   .stroke-draw {
     stroke-dasharray: 1000;
@@ -95,19 +122,25 @@ input:-webkit-autofill {
   }
 
   .impossible-shadow {
-    box-shadow: 4px 4px 0 0 hsl(30, 5%, 20%), 8px 8px 0 0 hsl(30, 5%, 15%);
+    box-shadow: 4px 4px 0 0 var(--color-border-default), 8px 8px 0 0 var(--color-border-subtle);
   }
 
   /* Text gradient for warm theme */
   .text-gradient-warm {
-    background: linear-gradient(135deg, hsl(40, 20%, 92%) 0%, hsl(35, 18%, 70%) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-text-primary) 0%,
+      var(--color-accent-subtle) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 }
 
-/* Escher pattern background */
+/* ============================================
+   ESCHER PATTERN BACKGROUND (legacy)
+   ============================================ */
 .escher-pattern {
   background-image: linear-gradient(
       30deg,
@@ -161,6 +194,26 @@ input:-webkit-autofill {
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
 }
 
+/* ============================================
+   SCROLLING ANIMATION
+   ============================================ */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
 /* Penrose triangle inspired border */
 .penrose-border {
   position: relative;
@@ -172,11 +225,11 @@ input:-webkit-autofill {
   inset: -2px;
   background: linear-gradient(
     45deg,
-    hsl(30, 5%, 30%) 0%,
-    hsl(30, 5%, 20%) 25%,
+    var(--color-border-strong) 0%,
+    var(--color-border-default) 25%,
     hsl(30, 5%, 40%) 50%,
-    hsl(30, 5%, 20%) 75%,
-    hsl(30, 5%, 30%) 100%
+    var(--color-border-default) 75%,
+    var(--color-border-strong) 100%
   );
   z-index: -1;
   border-radius: inherit;

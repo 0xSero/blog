@@ -1,0 +1,213 @@
+---
+title: 'MiniMax-M2 Proxy – Bridging 229B Models to Standard APIs'
+client: 'Open Source Project'
+date: '2025-11-02'
+summary: 'A translation proxy that enables MiniMax-M2 (229B MoE model) to work seamlessly with OpenAI and Anthropic SDKs through intelligent XML-to-JSON conversion.'
+tags: ['AI', 'Python', 'LLM Infrastructure', 'Open Source']
+images: ['/static/images/case-studies/minimax-proxy.png']
+featured: true
+metrics:
+  - label: 'GitHub Stars'
+    value: '33+'
+  - label: 'API Formats'
+    value: 'OpenAI + Anthropic'
+  - label: 'Model Size'
+    value: '229B MoE'
+---
+
+## Overview
+
+**MiniMax-M2 Proxy** solves a critical interoperability problem: MiniMax-M2, a powerful 229B parameter Mixture-of-Experts model, uses custom XML formatting for tool calls that most frameworks cannot parse.
+
+This proxy translates between MiniMax's native format and standard OpenAI/Anthropic APIs, enabling developers to leverage cutting-edge open models without rewriting their entire stack.
+
+**Repository:** [github.com/0xSero/minimax-m2-proxy](https://github.com/0xSero/minimax-m2-proxy)
+
+## The Problem
+
+Open-weight large language models are advancing rapidly. MiniMax-M2 offers impressive reasoning capabilities at 229B parameters—but ships with a fundamental compatibility issue:
+
+**Native Output:**
+
+```xml
+<minimax:tool_call>
+  {"name": "search", "arguments": {"query": "latest news"}}
+</minimax:tool_call>
+```
+
+**What OpenAI SDKs Expect:**
+
+```json
+{
+  "tool_calls": [
+    {
+      "function": { "name": "search", "arguments": "{\"query\": \"latest news\"}" }
+    }
+  ]
+}
+```
+
+**What Anthropic SDKs Expect:**
+
+```json
+{
+  "content": [
+    {
+      "type": "tool_use",
+      "name": "search",
+      "input": { "query": "latest news" }
+    }
+  ]
+}
+```
+
+Without a translation layer, developers face a choice:
+
+1. Rewrite all their tool-calling code for MiniMax's XML format
+2. Give up on using MiniMax's tool-calling capabilities entirely
+3. Use a different (potentially less capable) model
+
+## Solution
+
+The proxy sits between your application and the MiniMax backend (TabbyAPI or vLLM), performing real-time translation:
+
+### Dual API Support
+
+| Endpoint               | Compatible With                           |
+| ---------------------- | ----------------------------------------- |
+| `/v1/chat/completions` | OpenAI SDK, LangChain, most AI frameworks |
+| `/v1/messages`         | Anthropic SDK, Claude-compatible tooling  |
+
+### Intelligent Translation
+
+**XML-to-JSON Conversion**
+
+- Parses `<minimax:tool_call>` blocks from model output
+- Converts to proper JSON format for target API
+- Handles multiple simultaneous tool calls correctly
+
+**Type Inference**
+
+- Automatically converts parameter types based on tool schemas
+- Integers, floats, booleans, and nested JSON objects
+- No manual type coercion required in your code
+
+**Reasoning Preservation**
+
+- Maintains `<think>` blocks verbatim in output
+- Enables visibility into model's chain-of-thought
+- Critical for debugging and understanding model behavior
+
+### Streaming Support
+
+Full Server-Sent Events (SSE) support for both API formats—the proxy handles the complexity of streaming XML parsing and translates to proper streaming JSON chunks.
+
+## Technical Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  Your Application                        │
+│         (OpenAI SDK / Anthropic SDK / Custom)           │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                MiniMax-M2 Proxy                          │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
+│  │   Router    │  │  XML Parser │  │ Type Coerce │     │
+│  └─────────────┘  └─────────────┘  └─────────────┘     │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
+│  │ OpenAI Fmt  │  │Anthropic Fmt│  │  SSE Stream │     │
+│  └─────────────┘  └─────────────┘  └─────────────┘     │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│              TabbyAPI / vLLM Backend                     │
+│                  (MiniMax-M2 229B)                       │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Tech Stack
+
+- **Framework**: FastAPI with full async support
+- **Validation**: Pydantic for type-safe request/response handling
+- **Deployment**: Systemd service file for production
+- **Python**: 3.11+ for modern async features
+
+## Challenges & Solutions
+
+### XML in Streaming Contexts
+
+**Challenge**: Streaming responses arrive token-by-token. An XML tag might be split across multiple chunks.
+
+**Solution**: Stateful streaming parser that buffers partial XML, only emitting translated JSON when a complete tool call is parsed.
+
+### Type Ambiguity
+
+**Challenge**: MiniMax outputs all values as strings. A tool expecting `{"count": 5}` receives `{"count": "5"}`.
+
+**Solution**: Schema-aware type coercion. The proxy reads your tool definitions and converts parameters to their expected types automatically.
+
+### Multiple Tool Calls
+
+**Challenge**: Some responses contain multiple tool calls in sequence. Both APIs have specific formats for expressing this.
+
+**Solution**: Accumulator pattern that collects all tool calls before emitting the properly-formatted response.
+
+## Results
+
+### Community Impact
+
+- **33+ GitHub stars** from developers integrating MiniMax into existing stacks
+- **3 forks** with contributions for additional backends
+- Featured in discussions about running open models in production
+
+### Use Cases Enabled
+
+1. **Drop-in Replacement**: Swap MiniMax into existing OpenAI-based applications
+2. **Hybrid Architectures**: Route different queries to different models while maintaining a consistent API
+3. **Research**: Compare model behavior without rewriting evaluation harnesses
+4. **Cost Optimization**: Use powerful open models where they excel, proprietary where they don't
+
+## Deployment
+
+The proxy is designed for production use:
+
+```bash
+# Development
+uvicorn main:app --host 0.0.0.0 --port 8000
+
+# Production (systemd service provided)
+systemctl enable minimax-proxy
+systemctl start minimax-proxy
+```
+
+Configuration via environment variables:
+
+- `BACKEND_URL`: TabbyAPI or vLLM endpoint
+- `BACKEND_API_KEY`: Authentication for backend
+- `LOG_LEVEL`: Debugging granularity
+
+## Lessons Learned
+
+1. **Interoperability > Features** – A proxy that makes existing tools work is often more valuable than a new tool with more features.
+
+2. **Streaming is non-negotiable** – Users expect real-time responses. Any translation layer must preserve streaming semantics.
+
+3. **Type safety at boundaries** – Pydantic validation at API boundaries catches issues before they become runtime errors.
+
+4. **Production-ready from day one** – Including systemd configs, logging, and proper error handling enabled immediate production deployment.
+
+## Future Work
+
+- **Model router**: Intelligent routing between multiple backends based on query characteristics
+- **Caching layer**: Response caching for repeated identical queries
+- **Metrics & observability**: Prometheus endpoints for production monitoring
+- **Additional models**: Support for other models with non-standard tool call formats
+
+---
+
+This project demonstrates 0xSero's approach to **infrastructure that enables rather than constrains**. When the gap between a powerful model and your existing code is just a thin translation layer, that's the right abstraction.
+
+Explore the code: [github.com/0xSero/minimax-m2-proxy](https://github.com/0xSero/minimax-m2-proxy)

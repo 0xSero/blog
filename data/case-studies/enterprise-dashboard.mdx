@@ -1,0 +1,105 @@
+---
+title: 'ZKSync & Ethereum Governance Event Monitor'
+client: 'ZKSync (with ScopeLift)'
+date: '2024-04-10'
+summary: 'A transparent, scalable governance event monitor for ZKSync Era and Ethereum that turns raw on-chain activity into structured RSS feeds.'
+tags: ['Ethereum', 'ZKSync', 'Governance', 'Infrastructure']
+images: ['/static/images/case-studies/dashboard.png']
+featured: true
+metrics:
+  - label: 'ZKSync Era Calls/Day'
+    value: '80k–160k'
+  - label: 'Mainnet Calls/Day'
+    value: '5k–10k'
+  - label: 'RSS Update Frequency'
+    value: '~5 min'
+---
+
+## Problem
+
+The ZKSync & Ethereum Governance Event Monitor project aimed to create a transparent, scalable, and efficient monitoring system for governance-related events on ZKSync Era and Ethereum Mainnet. By transforming blockchain events into structured RSS feeds, this solution provides stakeholders and developers with accessible and real-time insights into governance activities.
+
+The collaboration with ScopeLift ensured a robust design and seamless implementation within a tight one-month timeline, leveraging cutting-edge technologies and best practices for scalable, cloud-based deployments.
+
+## Objectives
+
+1. **Governance Event Tracking**: Capture and process governance-related blockchain events, including proposal creation, execution, cancellation, and administrative changes.
+2. **RSS Feed Integration**: Present event data through user-friendly, regularly updated RSS feeds.
+3. **Scalable and Reliable Architecture**: Utilize Google Cloud Platform (GCP) and Docker for deployment, ensuring scalability and reliability.
+4. **Transparent Monitoring**: Provide structured and archived historical data for long-term accessibility.
+
+## Solution
+
+The project utilized a modular, cloud-based architecture, encompassing blockchain networks, backend services, storage, and frontend components.
+
+### Key Features
+
+- **Event Detection**: Monitors and processes governance events in batches for efficiency.
+- **RSS Feed Updates**: Automatically generates and updates feeds with new events while archiving old entries for transparency.
+- **Scalability**: Supports large-scale RPC usage with over 150,000 daily calls across Ethereum Mainnet and ZKSync Era.
+
+### Core Functionalities
+
+**1. Event Monitoring**
+
+- Captures governance-related events such as proposal creation, execution, and cancellations.
+- Supports multiple blockchains: Ethereum Mainnet and ZKSync Era.
+
+**2. RSS Feed Integration**
+
+- RSS feeds allow users to track events in real-time.
+- Archived RSS entries ensure historical data remains accessible.
+
+**3. Infrastructure**
+
+- Cloud Platform: GCP for reliable and scalable storage.
+- Containerization: Docker for consistent deployment.
+- Frontend Framework: Next.js for user-facing interactions.
+
+## Challenges and Solutions
+
+### Tight Timeline
+
+**Challenge**: Completing the project within one month required efficient task allocation and rapid prototyping.
+
+**Solution**: A well-defined roadmap and daily syncs with ScopeLift ensured alignment and progress.
+
+### High RPC Usage
+
+**Challenge**: Balancing extensive RPC calls with network rate limits.
+
+**Solution**: Batch processing with optimized parameters reduced redundant calls while maintaining performance.
+
+### Scalability
+
+**Challenge**: Ensuring scalability for increasing event volumes and user access.
+
+**Solution**: GCP's scalable storage and processing capabilities allowed seamless handling of large data volumes.
+
+### Error Handling
+
+**Challenge**: Managing transient and permanent errors in blockchain data retrieval.
+
+**Solution**: A robust error handling mechanism with retry logic and alerting ensured uninterrupted operation.
+
+## Results
+
+1. **Functional Monitoring System**
+
+   - Real-time event monitoring for Ethereum and ZKSync governance activities.
+   - Seamless RSS feed updates with archived data storage.
+
+2. **Scalable Architecture**
+
+   - GCP and Docker ensured the system could handle high traffic and data volumes.
+
+3. **Stakeholder Value**
+
+   - Simplified tracking of governance events enhanced transparency and accessibility for developers and users.
+
+4. **Efficient Development**
+   - Delivered on time with all features fully functional, showcasing effective collaboration and execution.
+
+---
+
+**Live**: [zkrss.com](https://feed.zknation.io/)

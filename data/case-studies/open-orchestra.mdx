@@ -1,0 +1,199 @@
+---
+title: 'Open Orchestra – Multi-Agent Orchestration System'
+client: 'Open Source'
+date: '2025-02-01'
+summary: 'A hub-and-spoke multi-agent orchestration plugin with Neo4j-backed memory, 22+ tool APIs, and built-in worker profiles for complex AI workflows.'
+tags: ['AI', 'Agents', 'TypeScript', 'Neo4j']
+images: ['/static/images/case-studies/open-orchestra.png']
+featured: true
+metrics:
+  - label: 'Tool APIs'
+    value: '22+'
+  - label: 'Worker Profiles'
+    value: '6 built-in'
+  - label: 'Memory Backend'
+    value: 'Neo4j Graph'
+---
+
+## Background
+
+Modern AI workflows often require multiple specialized agents working together. Open Orchestra is a plugin for OpenCode that enables spawning, managing, and coordinating AI workers with a central orchestrator.
+
+The goal: make multi-agent coordination as simple as calling a function, while maintaining the complexity needed for real-world tasks.
+
+## Architecture
+
+### Hub-and-Spoke Model
+
+```
+                    ┌─────────────────┐
+                    │   Orchestrator  │
+                    │   (Central Hub) │
+                    └────────┬────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+        ▼                    ▼                    ▼
+┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+│ Vision        │  │ Documentation │  │ Code          │
+│ Analyst       │  │ Librarian     │  │ Implementer   │
+└───────────────┘  └───────────────┘  └───────────────┘
+```
+
+The orchestrator delegates tasks to specialized workers, each optimized for specific task categories. Workers report progress back, and the orchestrator synthesizes results.
+
+### Neo4j Memory System
+
+Unlike flat key-value stores, Open Orchestra uses a graph database for memory:
+
+- **Project scope**: Context specific to the current project
+- **Global scope**: Knowledge that persists across projects
+- **Relationships**: Entities connect semantically, not just by key
+
+This enables queries like "What did we learn about authentication when working on the payments service?" that traverse connections in the knowledge graph.
+
+## Worker Profiles
+
+Six built-in profiles cover common development tasks:
+
+1. **Vision Analyst** – Analyzes images, screenshots, and visual content
+2. **Documentation Librarian** – Finds, reads, and synthesizes documentation
+3. **Code Implementer** – Writes and modifies code with full context
+4. **System Architect** – Designs systems and evaluates trade-offs
+5. **Code Explorer** – Navigates and understands unfamiliar codebases
+6. **Memory Graph Curator** – Manages and organizes the knowledge graph
+
+Each profile is customizable via JSON configuration.
+
+## Tool APIs
+
+The 22+ tool APIs fall into three categories:
+
+### Worker Management
+
+```typescript
+// Spawn a new worker
+await orchestrator.spawnWorker({
+  profile: 'code-implementer',
+  task: 'Implement the user authentication module',
+  context: projectContext,
+})
+
+// Check worker status
+const status = await orchestrator.getWorkerStatus(workerId)
+
+// Terminate worker
+await orchestrator.stopWorker(workerId)
+```
+
+### Task Delegation
+
+```typescript
+// Delegate a task with dependencies
+await orchestrator.delegateTask({
+  task: 'Build the API layer',
+  dependencies: ['database-schema', 'auth-module'],
+  assignTo: 'code-implementer',
+})
+
+// Parallel task execution
+await orchestrator.parallelTasks([
+  { task: 'Write unit tests', profile: 'code-implementer' },
+  { task: 'Update documentation', profile: 'documentation-librarian' },
+])
+```
+
+### Memory Operations
+
+```typescript
+// Store knowledge
+await memory.store({
+  entity: 'AuthenticationModule',
+  facts: ['Uses JWT tokens', 'Refresh tokens expire in 7 days'],
+  scope: 'project',
+})
+
+// Query relationships
+const related = await memory.query({
+  from: 'AuthenticationModule',
+  relationship: 'depends-on',
+})
+```
+
+## Key Features
+
+### Dynamic Port Allocation
+
+When spawning workers, Open Orchestra automatically assigns ports to prevent conflicts. This allows running dozens of workers simultaneously without manual configuration.
+
+### Context Pruning
+
+Inspired by DCP (Dynamic Context Pruning), the system automatically truncates large tool outputs and manages context for long sessions. This prevents context window overflow while preserving important information.
+
+### Configuration Layers
+
+```
+┌─────────────────────────────┐
+│     Project Config          │  ← .orchestra/config.json
+├─────────────────────────────┤
+│     Global Config           │  ← ~/.orchestra/config.json
+├─────────────────────────────┤
+│     Default Config          │  ← Built-in defaults
+└─────────────────────────────┘
+```
+
+Project-level overrides global, which overrides defaults. JSON schema validation ensures configurations are valid.
+
+## Use Cases
+
+### 1. Complex Refactoring
+
+A System Architect analyzes the codebase and proposes a refactoring plan. Multiple Code Implementers execute changes in parallel. The Documentation Librarian updates docs as changes land.
+
+### 2. Bug Investigation
+
+A Code Explorer traces the bug through the codebase. A Vision Analyst examines screenshots of the issue. The orchestrator synthesizes findings and delegates the fix.
+
+### 3. Knowledge Base Building
+
+The Memory Graph Curator processes documentation and code comments, building a queryable knowledge graph that persists across sessions.
+
+## Technical Decisions
+
+### Why Neo4j?
+
+Graph databases excel at representing relationships. When an agent learns that "Service A calls Service B which writes to Database C," that relationship is first-class, not buried in a text blob.
+
+### Why TypeScript?
+
+The plugin integrates with OpenCode, which is TypeScript-native. Type safety catches integration errors at compile time rather than runtime.
+
+### Why Hub-and-Spoke?
+
+Flat peer-to-peer agent systems quickly become unmanageable. A central orchestrator provides:
+
+- Clear responsibility boundaries
+- Unified progress tracking
+- Consistent error handling
+- Resource management
+
+## Results
+
+Open Orchestra has been used for:
+
+- Refactoring 50k+ line codebases with coordinated changes
+- Building documentation from scratch by analyzing code
+- Debugging complex multi-service issues with parallel investigation
+
+The hub-and-spoke model scales to ~10 concurrent workers before coordination overhead becomes significant.
+
+## Future Work
+
+- **Distributed execution** across multiple machines
+- **Agent marketplace** for sharing worker profiles
+- **Visual workflow editor** for non-developers
+- **Integration with CI/CD** for automated code review
+
+---
+
+Open Orchestra is open source at [github.com/0xSero/open-orchestra](https://github.com/0xSero/open-orchestra).

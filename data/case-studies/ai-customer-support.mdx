@@ -1,0 +1,111 @@
+---
+title: 'IVCNotes – Privacy-Preserving Digital Asset Management'
+client: 'Ethereum Foundation (Grant)'
+date: '2024-08-20'
+summary: 'A research and PoC implementation of a privacy-preserving digital note system using zero-knowledge proofs, IVC, and MPC.'
+tags: ['Zero-Knowledge', 'IVC', 'MPC', 'Rust']
+images: ['/static/images/case-studies/ai-support.png']
+featured: true
+metrics:
+  - label: 'Project Duration'
+    value: '3 months'
+  - label: 'Core Components'
+    value: 'ZK + IVC + MPC'
+  - label: 'Deliverables'
+    value: 'PoC + Protocol Design'
+---
+
+## Background
+
+The Ethereum Foundation engaged our team to design and implement a cutting-edge privacy-preserving framework for digital asset management. The project, **IVCNotes**, focused on creating a system that leverages Zero-Knowledge Proofs (ZKPs) and Incremental Verifiable Computation (IVC) to enable secure and private transactions of digital notes. Additionally, Multi-Party Computation (MPC) was explored as a mechanism for collective verification to enhance the system's security and resilience.
+
+## Objectives
+
+1. **Develop a Privacy-Preserving Protocol**: Enable private issuance, ownership, and transfer of digital notes without revealing transaction details.
+2. **Research and Implement MPC**: Explore MPC's role in verifying transactions collectively while maintaining privacy.
+3. **Deliverables**:
+   - Research documentation and protocol designs
+   - Functional proof-of-concept (PoC) implementations
+   - Backend service for managing notes and communications
+   - Demonstrations of core functionalities
+
+## Implementation Details
+
+### 1. Protocol Development
+
+We created a robust cryptographic framework for the IVCNotes system with the following features:
+
+- **Zero-Knowledge Proofs**: Efficient proof generation and validation using Rust and the Arkworks cryptographic library.
+- **Incremental Verifiable Computation (IVC)**: Implemented for chaining ZK proofs across multiple transfers to maintain efficiency.
+- **Note Management**: UTXO-style note lifecycle operations with split and transfer capabilities.
+- **Double-Spending Prevention**: Designed using blinded identifiers (nullifiers) with optional collective betrayal detection.
+
+### 2. Backend Service
+
+A backend service was developed for:
+
+- **Data Storage**: Securely managing user identities, issued notes, and transaction logs using MongoDB.
+- **Communication**: HTTP-based APIs enabling interaction between the client, prover, and verifier components.
+- **Message Dealer Service**: Routing encrypted messages between participants to facilitate note issuance and transfer.
+
+### 3. Multi-Party Computation Research
+
+MPC was proposed to enhance system resilience through collective verification. We examined the potential integration of MPC for:
+
+- **Distributed Verification**: Securely validating notes without revealing inputs.
+- **Betrayal Detection**: Detecting double-spending events without exposing sensitive data.
+- **Threshold Cryptography**: Implementing t-of-n schemes for increased fault tolerance.
+
+## Technical Architecture
+
+The system architecture combines multiple cryptographic components:
+
+- **Language**: Rust
+- **Libraries**: arkeddsa for ZKP circuits, Poseidon hash functions
+- **Serialization**: Serde
+- **Database**: MongoDB for persistent storage
+
+## Results
+
+### Functional Proof-of-Concept
+
+We delivered a fully functional PoC showcasing the system's core capabilities:
+
+- Private note issuance and transfer
+- Efficient ZK proof generation and verification
+- User-friendly CLI commands for managing notes
+
+### Documentation and Demos
+
+Comprehensive documentation was created, detailing the system's architecture, cryptographic protocols, and operational workflows. Interactive demonstrations were conducted to highlight:
+
+- Privacy-preserving transactions
+- Resilience against double-spending
+- Potential integration of MPC for enhanced security
+
+### Key Outcomes
+
+- The project demonstrated the feasibility of combining ZKPs and IVC for privacy-preserving digital asset systems.
+- Research insights into MPC highlighted its potential for collective verification but also identified challenges such as computational overhead and network complexity.
+
+## Challenges & Lessons Learned
+
+### Challenges
+
+1. **Performance**: Proof generation for large-scale scenarios required careful tuning and circuit design.
+2. **MPC Complexity**: Coordinating MPC with existing ZK systems adds non-trivial infrastructure overhead.
+3. **Operational Overhead**: Nullifier management and double-spend detection in decentralized settings is subtle.
+
+### Lessons
+
+1. Hybrid architectures (ZK + IVC + MPC) offer strong guarantees, but must be engineered for real-world scale.
+2. Modularity and documentation are essential when dealing with advanced cryptography.
+3. Early collaboration with cryptography experts avoids dead ends later.
+
+## Future Work
+
+- **Enhanced Privacy**: Stealth addresses and richer note types.
+- **MPC Optimization**: Custom, use-case-specific MPC protocols.
+- **Scalability**: Faster proving, better parallelization.
+- **On-Chain Integration**: Smart contracts for on-chain settlement and coordination.
+- **UX**: Move from CLI-first to developer and end-user friendly interfaces.

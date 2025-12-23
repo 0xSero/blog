@@ -1,19 +1,19 @@
 const siteMetadata = {
-  title: 'Ethers Club',
-  author: 'Sero',
-  headerTitle: 'Ethers Club',
-  description: 'You found me.',
+  title: 'Sybil Solutions',
+  author: 'Sybil Solutions',
+  headerTitle: 'Sybil Solutions',
+  description: 'Expert software development, AI agents, and consulting services.',
   language: 'en-us',
-  theme: 'system', // system, dark or light
-  siteUrl: 'https://blog.ethers.club',
+  theme: 'dark', // system, dark or light - default to dark for Sybil Solutions
+  siteUrl: 'https://sybilsolutions.com',
   siteRepo: 'https://github.com/Seroxdesign',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/site.png',
   socialBanner: '/static/images/site.png',
-  email: 'admin@serotonindesigns.com',
+  email: 'contact@sybilsolutions.com',
   github: 'https://github.com/Seroxdesign',
   twitter: 'https://twitter.com/0x_Sero',
-  youtube: 'https://www.youtube.com/c/SerotoninExperience',
+  youtube: '',
   linkedin: 'https://www.linkedin.com/in/sero-346b85202/',
   locale: 'en-US',
   analytics: {
