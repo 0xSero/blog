@@ -10,19 +10,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Send to Formspree - free form backend
-    const response = await fetch('https://formspree.io/f/xwpkvgdp', {
+    // Web3Forms - unlimited free, sends to contact@sybilsolutions.com
+    const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
       body: JSON.stringify({
+        access_key: '0a0ecb80-ba96-44f8-9efa-579664e6fe05',
         name,
         email,
         company: company || 'Not provided',
         message,
-        _subject: `New contact from ${name} - Sybil Solutions`,
+        subject: `New contact from ${name} - Sybil Solutions`,
+        from_name: 'Sybil Solutions Contact Form',
       }),
     })
 
