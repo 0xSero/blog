@@ -624,9 +624,12 @@ export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false)
   const canvasRef = useRef(null)
   const animationRef = useRef(null)
+  const transitionRef = useRef(false)
+  const transitionProgressRef = useRef(0)
 
   const handleEnter = () => {
     setIsTransitioning(true)
+    transitionRef.current = true
     sessionStorage.setItem('sybil_visited', 'true')
     setTimeout(() => {
       router.push('/home')
@@ -634,6 +637,12 @@ export default function Index() {
   }
 
   useEffect(() => {
+    // Reset all state on mount (important for back navigation)
+    transitionRef.current = false
+    transitionProgressRef.current = 0
+    setIsTransitioning(false)
+    setIsLoaded(false)
+
     const params = new URLSearchParams(window.location.search)
 
     const timer = setTimeout(() => setIsLoaded(true), 100)
@@ -644,7 +653,6 @@ export default function Index() {
     }
 
     const ctx = canvas.getContext('2d')
-    let transitionProgress = 0
     let canvasScale = 1
     let fibers = []
     let pattern = null
@@ -742,10 +750,10 @@ export default function Index() {
       }
 
       // Draw center disc
-      if (isTransitioning) {
-        transitionProgress = Math.min(transitionProgress + 0.015, 1)
+      if (transitionRef.current) {
+        transitionProgressRef.current = Math.min(transitionProgressRef.current + 0.015, 1)
       }
-      drawCenterDisc(ctx, centerX, centerY, clearRadius, transitionProgress)
+      drawCenterDisc(ctx, centerX, centerY, clearRadius, transitionProgressRef.current)
 
       animationRef.current = requestAnimationFrame(animate)
     }
@@ -759,7 +767,7 @@ export default function Index() {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [router, isTransitioning])
+  }, [router])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
