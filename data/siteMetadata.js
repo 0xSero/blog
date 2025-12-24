@@ -5,7 +5,7 @@ const siteMetadata = {
   description: 'Expert software development, AI agents, and consulting services.',
   language: 'en-us',
   theme: 'dark', // system, dark or light - default to dark for Sybil Solutions
-  siteUrl: 'https://sybilsolutions.com',
+  siteUrl: 'https://sybilsolutions.ai',
   siteRepo: 'https://github.com/0xSero',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/og-image.png',
