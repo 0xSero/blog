@@ -1,5 +1,5 @@
 /**
- * Generate a static OG image with the portal animation aesthetic
+ * Generate a static OG image with the Watching Eyes pattern
  * Run with: node scripts/generate-og-image.js
  *
  * Requires: npm install canvas
@@ -12,18 +12,21 @@ const path = require('path')
 // OG Image dimensions (Twitter/Facebook recommended)
 const WIDTH = 1200
 const HEIGHT = 630
+const TAU = Math.PI * 2
 
 // Palette (matching the portal page)
 const palette = {
   base: 'hsl(30, 5%, 10.5%)',
-  baseDeep: 'hsl(30, 5%, 8%)',
+  baseDeep: 'hsl(30, 5%, 6%)',
   center: 'hsl(40, 30%, 96%)',
   ink: 'hsla(40, 20%, 92%, 0.75)',
   inkBright: 'hsla(40, 25%, 95%, 0.9)',
   inkSoft: 'hsla(35, 18%, 70%, 0.45)',
   inkFaint: 'hsla(35, 12%, 55%, 0.2)',
-  glow: 'hsla(40, 25%, 88%, 0.35)',
+  glow: 'hsla(40, 25%, 88%, 0.25)',
   highlight: 'hsla(45, 35%, 85%, 0.5)',
+  highlightBright: 'hsla(45, 40%, 92%, 0.7)',
+  highlightSubtle: 'hsla(40, 25%, 75%, 0.2)',
 }
 
 // Simple seeded random for reproducibility
@@ -33,84 +36,206 @@ function seededRandom() {
   return seed / 0x7fffffff
 }
 
-// Game of Life simulation
-class GameOfLife {
-  constructor(width, height, cellSize, clearRadius) {
+// Watching Eyes pattern
+class WatchingEyes {
+  constructor(width, height, clearRadius) {
     this.width = width
     this.height = height
-    this.cellSize = cellSize
     this.clearRadius = clearRadius
     this.centerX = width / 2
     this.centerY = height / 2
-    this.cols = Math.ceil(width / cellSize)
-    this.rows = Math.ceil(height / cellSize)
-    this.grid = []
-    this.nextGrid = []
-    this.initialize()
+    this.eyes = []
+    this.rings = []
+    this.build()
   }
 
-  initialize() {
-    for (let y = 0; y < this.rows; y++) {
-      this.grid[y] = new Array(this.cols).fill(0)
-      this.nextGrid[y] = new Array(this.cols).fill(0)
-    }
+  build() {
+    const cx = this.centerX
+    const cy = this.centerY
+    const edgePadding = 14
+    const maxDim = Math.min(this.width, this.height)
+    const maxRadius = maxDim / 2 - edgePadding
+    const minRadius = Math.max(this.clearRadius * 1.2, 30)
+    const ringCount = 8
+    const eyeScale = 1
+    const ringSpacing = 50
 
-    // Seed with sparse random cells
-    for (let y = 0; y < this.rows; y++) {
-      for (let x = 0; x < this.cols; x++) {
-        const cellCx = (x + 0.5) * this.cellSize
-        const cellCy = (y + 0.5) * this.cellSize
-        const distFromCenter = Math.sqrt(
-          (cellCx - this.centerX) ** 2 + (cellCy - this.centerY) ** 2
-        )
+    this.rings = []
+    this.eyes = []
 
-        if (distFromCenter < this.clearRadius * 1.4) continue
-        this.grid[y][x] = seededRandom() < 0.12 ? 1 : 0
+    for (let r = 0; r < ringCount; r++) {
+      const ringRadius = minRadius + r * ringSpacing
+      if (ringRadius > maxRadius) continue
+
+      const ringT = r / Math.max(ringCount - 1, 1)
+      const eyeSpacing = 70
+      const circumference = TAU * ringRadius
+      const rawCount = Math.max(4, Math.floor(circumference / eyeSpacing))
+      const eyeCount = Math.round(rawCount / 2) * 2
+      const baseSize = (14 + ringT * 10) * eyeScale
+
+      const ring = {
+        radius: ringRadius,
+        eyeCount,
+        baseSize,
+        ringIndex: r,
+        eyes: [],
       }
-    }
-  }
 
-  countNeighbors(x, y) {
-    let count = 0
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) {
-        if (dx === 0 && dy === 0) continue
-        const ny = (y + dy + this.rows) % this.rows
-        const nx = (x + dx + this.cols) % this.cols
-        count += this.grid[ny][nx]
-      }
-    }
-    return count
-  }
+      const ringOffset = (r % 2) * (Math.PI / eyeCount)
 
-  step() {
-    for (let y = 0; y < this.rows; y++) {
-      for (let x = 0; x < this.cols; x++) {
-        const cellCx = (x + 0.5) * this.cellSize
-        const cellCy = (y + 0.5) * this.cellSize
-        const distFromCenter = Math.sqrt(
-          (cellCx - this.centerX) ** 2 + (cellCy - this.centerY) ** 2
-        )
+      for (let e = 0; e < eyeCount; e++) {
+        const angle = (e / eyeCount) * TAU + ringOffset
+        const x = cx + Math.cos(angle) * ringRadius
+        const y = cy + Math.sin(angle) * ringRadius
+        const phase = (r * 0.13 + e * 0.07) % 1
 
-        if (distFromCenter < this.clearRadius * 1.4) {
-          this.nextGrid[y][x] = 0
-          continue
+        const eye = {
+          x,
+          y,
+          baseAngle: angle,
+          size: baseSize,
+          ringIndex: r,
+          eyeIndex: e,
+          phase,
+          ringT,
+          blinkPhase: (r * 0.17 + e * 0.11) % 1,
         }
 
-        const neighbors = this.countNeighbors(x, y)
-        const alive = this.grid[y][x] === 1
-
-        if (alive) {
-          this.nextGrid[y][x] = neighbors === 2 || neighbors === 3 ? 1 : 0
-        } else {
-          this.nextGrid[y][x] = neighbors === 3 ? 1 : 0
-        }
+        ring.eyes.push(eye)
+        this.eyes.push(eye)
       }
+
+      this.rings.push(ring)
+    }
+  }
+
+  drawEyeShape(ctx, width, height) {
+    ctx.beginPath()
+    ctx.moveTo(-width, 0)
+    ctx.bezierCurveTo(-width * 0.5, -height, width * 0.5, -height, width, 0)
+    ctx.bezierCurveTo(width * 0.5, height, -width * 0.5, height, -width, 0)
+    ctx.closePath()
+  }
+
+  drawEye(ctx, eye, globalAlpha) {
+    const { x, y, size, baseAngle, phase } = eye
+    const openness = 1 // All eyes open for static image
+    const watchAngle = baseAngle + Math.PI
+    const irisWander = Math.sin(phase * TAU) * 0.12
+
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(watchAngle)
+
+    const eyeWidth = size * 1.1
+    const eyeHeight = size * 0.5 * openness
+    const strokeW = 0.6 + size * 0.018
+
+    // Outer glow
+    ctx.globalAlpha = globalAlpha * 0.06
+    ctx.fillStyle = palette.glow
+    this.drawEyeShape(ctx, eyeWidth * 1.2, eyeHeight * 1.3)
+    ctx.fill()
+
+    // Sclera
+    ctx.globalAlpha = globalAlpha * 0.12 * openness
+    ctx.fillStyle = palette.highlight
+    this.drawEyeShape(ctx, eyeWidth, eyeHeight)
+    ctx.fill()
+
+    // Eye outline
+    ctx.globalAlpha = globalAlpha * 0.5
+    ctx.strokeStyle = palette.ink
+    ctx.lineWidth = strokeW
+    this.drawEyeShape(ctx, eyeWidth, eyeHeight)
+    ctx.stroke()
+
+    // Upper lid crease
+    ctx.globalAlpha = globalAlpha * 0.18
+    ctx.strokeStyle = palette.inkSoft
+    ctx.lineWidth = strokeW * 0.5
+    ctx.beginPath()
+    ctx.moveTo(-eyeWidth * 0.7, -eyeHeight * 0.25)
+    ctx.bezierCurveTo(
+      -eyeWidth * 0.2,
+      -eyeHeight * 1.15,
+      eyeWidth * 0.2,
+      -eyeHeight * 1.15,
+      eyeWidth * 0.7,
+      -eyeHeight * 0.25
+    )
+    ctx.stroke()
+
+    // Iris position
+    const irisX = irisWander * size * 0.15
+    const irisY = 0
+    const irisRadius = size * 0.26 * openness
+
+    // Iris
+    ctx.globalAlpha = globalAlpha * 0.5
+    ctx.fillStyle = palette.ink
+    ctx.beginPath()
+    ctx.arc(irisX, irisY, irisRadius, 0, TAU)
+    ctx.fill()
+
+    // Iris ring detail
+    if (irisRadius > 3.5) {
+      ctx.globalAlpha = globalAlpha * 0.12
+      ctx.strokeStyle = palette.highlightSubtle
+      ctx.lineWidth = irisRadius * 0.08
+      ctx.beginPath()
+      ctx.arc(irisX, irisY, irisRadius * 0.72, 0, TAU)
+      ctx.stroke()
     }
 
-    const temp = this.grid
-    this.grid = this.nextGrid
-    this.nextGrid = temp
+    // Pupil
+    const pupilRadius = irisRadius * 0.42
+    ctx.globalAlpha = globalAlpha * 0.85
+    ctx.fillStyle = palette.baseDeep
+    ctx.beginPath()
+    ctx.arc(irisX, irisY, pupilRadius, 0, TAU)
+    ctx.fill()
+
+    // Primary reflection
+    ctx.globalAlpha = globalAlpha * 0.6
+    ctx.fillStyle = palette.highlightBright
+    ctx.beginPath()
+    ctx.arc(irisX - irisRadius * 0.28, irisY - irisRadius * 0.32, pupilRadius * 0.32, 0, TAU)
+    ctx.fill()
+
+    // Secondary reflection
+    ctx.globalAlpha = globalAlpha * 0.3
+    ctx.beginPath()
+    ctx.arc(irisX + irisRadius * 0.22, irisY + irisRadius * 0.18, pupilRadius * 0.12, 0, TAU)
+    ctx.fill()
+
+    ctx.restore()
+  }
+
+  render(ctx) {
+    ctx.save()
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+
+    // Ring arcs (subtle glow)
+    this.rings.forEach((ring) => {
+      ctx.globalAlpha = 0.03
+      ctx.strokeStyle = palette.glow
+      ctx.lineWidth = 3
+      ctx.beginPath()
+      ctx.arc(this.centerX, this.centerY, ring.radius, 0, TAU)
+      ctx.stroke()
+    })
+
+    // Draw eyes
+    this.rings.forEach((ring) => {
+      ring.eyes.forEach((eye) => {
+        this.drawEye(ctx, eye, 0.85)
+      })
+    })
+
+    ctx.restore()
   }
 }
 
@@ -140,69 +265,10 @@ function generateOGImage() {
   }
   ctx.restore()
 
-  // Create Game of Life pattern
-  const cellSize = 14
-  const clearRadius = Math.min(WIDTH, HEIGHT) * 0.28
-  const gol = new GameOfLife(WIDTH, HEIGHT, cellSize, clearRadius)
-
-  // Run a few generations to get interesting patterns
-  for (let i = 0; i < 8; i++) {
-    gol.step()
-  }
-
-  // Render cells
-  ctx.save()
-  const maxDist = Math.sqrt((WIDTH / 2) ** 2 + (HEIGHT / 2) ** 2)
-
-  for (let y = 0; y < gol.rows; y++) {
-    for (let x = 0; x < gol.cols; x++) {
-      if (gol.grid[y][x] !== 1) continue
-
-      const cellX = x * cellSize
-      const cellY = y * cellSize
-      const cellCx = cellX + cellSize / 2
-      const cellCy = cellY + cellSize / 2
-
-      const distFromCenter = Math.sqrt((cellCx - WIDTH / 2) ** 2 + (cellCy - HEIGHT / 2) ** 2)
-
-      if (distFromCenter < clearRadius * 1.4) continue
-
-      // Distance-based opacity (edge cells brighter)
-      const normalizedDist = distFromCenter / maxDist
-      const revealFactor = 0.5 + normalizedDist * 0.5
-
-      // Cell glow
-      ctx.globalAlpha = 0.2 * revealFactor
-      ctx.fillStyle = palette.glow
-      ctx.beginPath()
-      ctx.arc(cellCx, cellCy, cellSize * 0.55, 0, Math.PI * 2)
-      ctx.fill()
-
-      // Cell core
-      ctx.globalAlpha = 0.7 * revealFactor
-      ctx.fillStyle = palette.ink
-      const inset = 1
-      const radius = 2
-      ctx.beginPath()
-      roundRect(
-        ctx,
-        cellX + inset,
-        cellY + inset,
-        cellSize - inset * 2,
-        cellSize - inset * 2,
-        radius
-      )
-      ctx.fill()
-
-      // Bright center
-      ctx.globalAlpha = 0.4 * revealFactor
-      ctx.fillStyle = palette.highlight
-      ctx.beginPath()
-      ctx.arc(cellCx, cellCy, cellSize * 0.15, 0, Math.PI * 2)
-      ctx.fill()
-    }
-  }
-  ctx.restore()
+  // Create Watching Eyes pattern
+  const clearRadius = Math.min(WIDTH, HEIGHT) * 0.38
+  const eyes = new WatchingEyes(WIDTH, HEIGHT, clearRadius)
+  eyes.render(ctx)
 
   // Center disc
   ctx.save()
@@ -224,7 +290,6 @@ function generateOGImage() {
   // Tagline
   ctx.font = '18px Georgia, serif'
   ctx.fillStyle = 'rgba(139, 90, 43, 0.8)'
-  ctx.letterSpacing = '4px'
   ctx.fillText('SOFTWARE  \u2022  AI  \u2022  AUTOMATION', WIDTH / 2, HEIGHT / 2 + 35)
   ctx.restore()
 
@@ -233,19 +298,6 @@ function generateOGImage() {
   const buffer = canvas.toBuffer('image/png')
   fs.writeFileSync(outputPath, buffer)
   console.log(`OG image saved to: ${outputPath}`)
-}
-
-// Helper for rounded rectangles
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.moveTo(x + r, y)
-  ctx.lineTo(x + w - r, y)
-  ctx.arcTo(x + w, y, x + w, y + r, r)
-  ctx.lineTo(x + w, y + h - r)
-  ctx.arcTo(x + w, y + h, x + w - r, y + h, r)
-  ctx.lineTo(x + r, y + h)
-  ctx.arcTo(x, y + h, x, y + h - r, r)
-  ctx.lineTo(x, y + r)
-  ctx.arcTo(x, y, x + r, y, r)
 }
 
 generateOGImage()
