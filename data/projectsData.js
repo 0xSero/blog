@@ -157,6 +157,24 @@ const projectsData = [
     tags: ['Podcast', 'Community', 'Media'],
   },
 
+  // New Projects
+  {
+    title: 'Open Queue',
+    description:
+      'Queue messages while AI assistants is thinking. Prevents context confusion from interrupting mid-response by holding messages until model is ready.',
+    imgSrc: '/static/images/open-queue.png',
+    href: 'https://github.com/0xSero/open-queue',
+    tags: ['AI', 'Developer Tools', 'TypeScript'],
+  },
+  {
+    title: 'MiniMax Agent (ACP)',
+    description:
+      'Integration of MiniAgent with Agent Communication Protocol for Zed editor. Full agent execution loop with persistent memory, Claude skills, and MCP tool support.',
+    imgSrc: '/static/images/mini-agent-acp.png',
+    href: 'https://github.com/MiniMax-AI/Mini-Agent',
+    tags: ['AI', 'Agents', 'Python'],
+  },
+
   // Earlier Projects
   {
     title: 'Metagame',

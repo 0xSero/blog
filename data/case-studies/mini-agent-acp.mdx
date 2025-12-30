@@ -1,0 +1,229 @@
+---
+title: 'MiniMax Agent – Agent Communication Protocol Integration'
+client: 'MiniMax AI'
+date: '2025-12-18'
+summary: 'Integration of MiniAgent with Agent Communication Protocol (ACP), enabling seamless agent execution within Zed editor through Anthropic-compatible API.'
+tags: ['AI', 'Agents', 'Python', 'ACP', 'Zed Editor']
+images: ['/static/images/case-studies/mini-agent-acp.png']
+featured: true
+metrics:
+  - label: 'GitHub Stars'
+    value: '1,000+'
+  - label: 'Forks'
+    value: '144'
+  - label: 'Contributors'
+    value: '9'
+  - label: 'License'
+    value: 'MIT'
+---
+
+## Overview
+
+**Mini Agent** is a minimal yet professional agent demo project built by MiniMax AI. I contributed the ACP (Agent Communication Protocol) integration, enabling seamless Zed editor integration for AI agent workflows.
+
+This project showcases production-grade agent patterns with MiniMax's M2.1 model, supporting interleaved thinking and Anthropic-compatible API for maximum interoperability.
+
+**Repository:** [github.com/MiniMax-AI/Mini-Agent](https://github.com/MiniMax-AI/Mini-Agent)
+
+## The Problem
+
+AI agents need to integrate with development environments, but:
+
+- **Fragmented Tooling**: Each editor requires different integration approaches
+- **Protocol Incompatibility**: No standard communication protocol between agents and IDE
+- **Complex Setup**: Production agent frameworks require extensive configuration
+
+## Solution
+
+### ACP Integration
+
+The Agent Communication Protocol (ACP) provides a standardized interface for agent-editor communication.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     Zed Editor                         │
+│         Agent Panel with mini-agent selected        │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          │ ACP Protocol
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│              Mini Agent ACP Server                     │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │
+│  │ ACP Handler │  │ M2.1 Model │  │ Tool Executor│   │
+│  └─────────────┘  └─────────────┘  └─────────────┘   │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│              MiniMax API (MiniMax-M2.1)                │
+│         https://api.minimax.io / api.minimaxi.com     │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Zed Editor Configuration
+
+Add to Zed `settings.json`:
+
+```json
+{
+  "agent_server": {
+    "mini-agent": {
+      "command": "/path/to/mini-agent-acp"
+    }
+  }
+}
+```
+
+The command path varies by installation method:
+
+- **uv tool install**: Use `which mini-agent-acp`
+- **Development mode**: `./mini_agent/acp/server.py`
+
+### Core Agent Features
+
+| Feature                | Description                                                  |
+| ---------------------- | ------------------------------------------------------------ |
+| **Full Agent Loop**    | Complete execution pipeline with file system and shell tools |
+| **Persistent Memory**  | Session Note Tool retains context across sessions            |
+| **Context Management** | Auto-summarization handles unlimited conversation length     |
+| **Claude Skills**      | 15 professional skills for documents, design, testing        |
+| **MCP Tools**          | Native MCP support for knowledge graphs, web search          |
+| **Logging**            | Detailed logs for debugging and monitoring                   |
+
+### Model Capabilities
+
+- **MiniMax-M2.1**: Latest model with exceptional multilingual and coding capabilities
+- **Interleaved Thinking**: Full chain-of-thought visibility for debugging
+- **Anthropic API Compatible**: Drop-in replacement for existing Claude workflows
+
+## Technical Implementation
+
+### ACP Server
+
+```python
+# mini_agent/acp/server.py
+class ACPServer:
+    async def handle_message(self, message: ACPMessage) -> ACPResponse:
+        # Route to appropriate handler based on message type
+        if message.type == "task_request":
+            return await self.execute_task(message.payload)
+        elif message.type == "tool_call":
+            return await self.execute_tool(message.tool_name, message.args)
+```
+
+### Zed Integration Flow
+
+1. **Agent Selection**: User selects "mini-agent" from Zed agent dropdown
+2. **Connection**: Zed connects to ACP server via stdin/stdout
+3. **Task Submission**: User submits task via Zed panel
+4. **Model Execution**: Task sent to MiniMax-M2.1 with full context
+5. **Tool Execution**: Agent uses file system, shell, and MCP tools
+6. **Response Delivery**: Results returned to Zed panel
+
+### Dependencies
+
+- **Python 3.11+** for async support
+- **uv** for package management
+- **MCP** for tool integration
+- **Claude Skills** (optional submodule)
+
+## Challenges & Solutions
+
+### Protocol Compatibility
+
+**Challenge**: ACP specification evolving; need to support both current and upcoming versions.
+
+**Solution**: Implemented version negotiation in handshake phase, with fallback to legacy mode for older Zed versions.
+
+### Performance Under Load
+
+**Challenge**: Long-running agent tasks could timeout Zed connection.
+
+**Solution**: Implemented heartbeat mechanism to keep connection alive, with streaming response for real-time feedback.
+
+### Cross-Platform Deployment
+
+**Challenge**: Zed and MiniMax API availability differ by region.
+
+**Solution**: Dual API endpoint support:
+
+- **Global**: `https://api.minimax.io`
+- **China**: `https://api.minimaxi.com`
+
+## Results
+
+### Community Impact
+
+- **1,000+ GitHub stars** showcasing interest in production agent frameworks
+- **144 forks** with active community experimentation
+- **9 contributors** across global community
+
+### Use Cases Enabled
+
+1. **Code Generation**: Generate files, refactor codebases, write tests
+2. **Documentation**: Create technical docs, README files, API references
+3. **Web Research**: MCP-powered search and summarization
+4. **CI/CD Integration**: Claude Skills for build, test, deploy workflows
+
+### Supported Platforms
+
+| Platform        | Installation                                                       |
+| --------------- | ------------------------------------------------------------------ |
+| **Quick Start** | `uv tool install git+https://github.com/MiniMax-AI/Mini-Agent.git` |
+| **Development** | Clone repo, `uv sync`, `uv run python -m mini_agent.cli`           |
+| **ACP Server**  | `./mini_agent/acp/server.py` or installed command                  |
+
+## Installation
+
+### Quick Start Mode
+
+```bash
+# Install from GitHub
+uv tool install git+https://github.com/MiniMax-AI/Mini-Agent.git
+
+# Setup configuration
+curl -fsSL https://raw.githubusercontent.com/MiniMax-AI/Mini-Agent/main/scripts/setup-config.sh | bash
+
+# Configure API key
+nano ~/.mini-agent/config/config.yaml
+```
+
+### Development Mode
+
+```bash
+git clone https://github.com/MiniMax-AI/Mini-Agent.git
+cd Mini-Agent
+uv sync
+uv run python -m mini_agent.cli
+```
+
+## Code Quality
+
+- **Comprehensive Testing**: Unit tests, functional tests, integration tests via pytest
+- **Documentation**: Development Guide, Production Guide, README in EN/CN
+- **MIT License**: Permissive open-source license
+- **Active Maintenance**: Regular commits, issue response, feature requests handling
+
+## Lessons Learned
+
+1. **Protocol Design Matters**: ACP's standardized approach enables interoperability that benefits entire ecosystem.
+
+2. **Anthropic Compatibility = Adoption**: Making API compatible with Anthropic SDK reduced adoption friction significantly.
+
+3. **Minimal != Simple**: The "minimal yet professional" philosophy produced a project that's easy to understand but production-ready.
+
+4. **Community-Driven Evolution**: Fork count and contributor diversity indicate healthy project ecosystem.
+
+## Future Work
+
+- **More MCP Tools**: Expand tool ecosystem (database, APIs, services)
+- **Multi-Agent Coordination**: Extend Orchestra patterns to MiniAgent
+- **Enterprise Features**: Authentication, rate limiting, audit logging
+- **Self-Hosting**: Simplified deployment for private infrastructure
+
+---
+
+This contribution demonstrates 0xSero's commitment to **interoperability infrastructure**—building bridges between AI capabilities and developer tools through standardized protocols integration.
+
+Explore the code: [github.com/MiniMax-AI/Mini-Agent](https://github.com/MiniMax-AI/Mini-Agent)

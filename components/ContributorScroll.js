@@ -15,7 +15,7 @@ const contributors = [
   { name: 'Saga', href: 'https://saga.xyz/' },
   // AI & Open Source
   { name: 'ElizaOS', href: 'https://elizaos.ai/' },
-  { name: 'MiniMax AI', href: 'https://minimaxi.com/' },
+  { name: 'MiniMax AI', href: 'https://minimax.io/', logo: '/static/images/minimax-logo.png' },
   { name: 'Hey', href: 'https://hey.xyz/' },
   { name: 'Synpress', href: 'https://synpress.io/' },
   // DAOs & Guilds
@@ -51,9 +51,10 @@ export default function ContributorScroll() {
           <Link
             key={`${org.name}-${i}`}
             href={org.href}
-            className="mx-8 flex-shrink-0 text-sm text-text-secondary transition-colors hover:text-text-primary"
+            className="mx-8 flex flex-shrink-0 items-center gap-2 text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
-            {org.name}
+            {org.logo && <img src={org.logo} alt={org.name} className="h-5 w-auto" />}
+            {!org.logo && org.name}
           </Link>
         ))}
       </div>

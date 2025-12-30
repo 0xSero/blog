@@ -1,0 +1,174 @@
+---
+title: 'Open Queue – Message Queue Plugin for OpenCode'
+client: 'Open Source Project'
+date: '2025-12-15'
+summary: 'A TypeScript plugin that queues messages while OpenCode is thinking, preventing context confusion from interrupted responses.'
+tags: ['AI', 'Developer Tools', 'TypeScript', 'Open Source']
+images: ['/static/images/case-studies/open-queue.png']
+featured: true
+metrics:
+  - label: 'GitHub Stars'
+    value: '75+'
+  - label: 'Forks'
+    value: '3'
+  - label: 'Contributors'
+    value: '2'
+---
+
+## Overview
+
+**Open Queue** solves a critical UX problem in AI-assisted coding: when a user sends a follow-up message while the model is still generating a response, the current message interrupts the ongoing computation, causing context confusion and lost work.
+
+This plugin queues messages during model processing and delivers them sequentially when the model becomes available.
+
+**Repository:** [github.com/0xSero/open-queue](https://github.com/0xSero/open-queue)
+
+## The Problem
+
+When working with AI coding assistants:
+
+```
+User: "Also fix the type error in user.ts"
+Assistant: [Thinking... generating response about database migration...]
+```
+
+**Without Open Queue:**
+
+- The new message interrupts the current response
+- Context window loses track of conversation state
+- Model produces incoherent follow-up responses
+- User loses the partially-generated migration code
+
+**With Open Queue:**
+
+- Message held in queue until model finishes
+- Delivered in order after current response completes
+- Both responses preserved, coherent context maintained
+
+## Solution
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  OpenCode Interface                │
+└─────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│                  Open Queue Plugin                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │ Message    │  │ Queue      │  │ Status      │  │
+│  │ Interceptor│  │ Manager    │  │ Monitor     │  │
+│  └─────────────┘  └─────────────┘  └─────────────┘  │
+└─────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────┐
+│                 Model Processing                   │
+└─────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+**Two Queue Modes:**
+
+| Mode        | Behavior                                                 |
+| ----------- | -------------------------------------------------------- |
+| `immediate` | Messages sends immediately (default)                     |
+| `hold`      | Messages queued until model finishes, then sent in order |
+
+**Commands:**
+
+```
+/queue hold       # Enable queueing mode
+/queue immediate  # Return to normal
+/queue status     # Check current mode
+```
+
+**Environment Control:**
+
+```bash
+OPENCODE_MESSAGE_QUEUE_MODE=hold opencode
+# Start OpenCode in hold mode by default
+```
+
+### Technical Implementation
+
+- **TypeScript + JavaScript** (62.7% / 37.3%)
+- **NPM Package**: `@0xsero/open-queue`
+- **CLI Tool**: `bun x @0xsero/open-queue`
+- **OpenCode Integration**: Plugin auto-registration via `opencode.json`
+
+## Technical Challenges
+
+### Message State Management
+
+**Challenge**: In hold mode, the UI shows the message as "sent" even though it's queued. When the model finishes, the message appears to be sent again.
+
+**Impact**: Visual glitch where message briefly appears, disappears, then reappears after model finishes.
+
+**Status**: Known limitation documented in README. The model only receives the message once (after finishing), but the visual feedback is imperfect due to OpenCode plugin API constraints.
+
+### Plugin Lifecycle
+
+**Challenge**: Ensuring the plugin loads before any messages are processed, even on cold starts or restarts.
+
+**Solution**: The installation script (`setup-config.sh` / `setup-config.ps1`) automatically adds the plugin to `opencode.json` and validates configuration before first run.
+
+## Installation
+
+```bash
+# Direct installation via bun
+bun x @0xsero/open-queue
+
+# Or via npx
+npx @0xSero/open-queue
+```
+
+The installer automatically:
+
+1. Adds plugin to `opencode.json`
+2. Sets up `/queue` command
+3. Validates configuration
+
+## Results
+
+### Community Impact
+
+- **75+ GitHub stars** from developers frustrated with message interruption
+- **3 forks** with active community contributions
+- **2 contributors** including Claude itself
+
+### Use Cases
+
+1. **Long-running Tasks**: When asking follow-ups during code generation
+2. **Multi-step Refactoring**: Queue several changes requests without interrupting
+3. **Context Preservation**: Maintain conversation coherence across complex modifications
+
+## Code Quality
+
+- **Comprehensive README**: Installation, usage, troubleshooting
+- **Cross-platform Support**: macOS/Linux (bash) and Windows (PowerShell)
+- **MIT License**: Free for all use cases
+- **Version Management**: `uv tool` integration for upgrades/uninstall
+
+## Lessons Learned
+
+1. **User Experience > Feature Count**: A single well-designed feature that solves one problem well outperforms complex alternatives that do many things poorly.
+
+2. **Documentation is Infrastructure**: Clear installation scripts and troubleshooting guides reduced support requests burden significantly.
+
+3. **Platform Constraints**: Working within OpenCode's plugin API taught me to design around platform limitations rather than fighting them.
+
+## Future Work
+
+- **Visual Improvements**: Partner with OpenCode team to fix the visual glitch
+- **Priority Queue**: Allow marking certain messages as "urgent" to jump ahead
+- **Batch Mode**: Automatically combine rapid-fire messages into single response
+
+---
+
+This project demonstrates 0xSero's approach to **practical infrastructure**—solving real developer pain points with minimal, focused solution.
+
+Explore the code: [github.com/0xSero/open-queue](https://github.com/0xSero/open-queue)
