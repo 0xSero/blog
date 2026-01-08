@@ -118,7 +118,7 @@ export default function CaseStudy({ post, otherStudies }) {
           )}
 
           {/* Content */}
-          <div className="prose prose-lg prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-a:text-primary-500 prose-strong:text-white prose-li:text-gray-300">
+          <div className="prose prose-lg prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-a:text-primary-500 prose-strong:text-white prose-li:text-gray-300 prose-table:text-gray-300 prose-thead:border-gray-600 prose-tr:border-gray-700 prose-th:text-white prose-td:text-gray-300">
             <MDXContent />
           </div>
 
