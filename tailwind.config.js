@@ -310,12 +310,25 @@ module.exports = {
             thead: {
               th: {
                 color: 'hsl(40, 20%, 92%)',
+                borderBottomColor: 'hsl(30, 5%, 25%)',
               },
             },
             tbody: {
               tr: {
                 borderBottomColor: 'hsl(30, 5%, 20%)',
               },
+              td: {
+                color: 'hsl(40, 20%, 92%)',
+              },
+            },
+            'thead th': {
+              color: 'hsl(40, 20%, 92%)',
+            },
+            'tbody td': {
+              color: 'hsl(40, 20%, 92%)',
+            },
+            table: {
+              color: 'hsl(40, 20%, 92%)',
             },
             blockquote: {
               color: 'hsl(40, 20%, 92%)',

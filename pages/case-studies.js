@@ -15,8 +15,17 @@ export default function CaseStudies({ caseStudies }) {
 
   const allTags = ['All', ...new Set(caseStudies.flatMap((cs) => cs.tags || []))]
 
+  // Sort by date descending (newest first), then filter by tag
+  const sortedStudies = [...caseStudies].sort((a, b) => {
+    const dateA = a.date ? new Date(a.date) : new Date(0)
+    const dateB = b.date ? new Date(b.date) : new Date(0)
+    return dateB - dateA
+  })
+
   const filteredStudies =
-    selectedTag === 'All' ? caseStudies : caseStudies.filter((cs) => cs.tags?.includes(selectedTag))
+    selectedTag === 'All'
+      ? sortedStudies
+      : sortedStudies.filter((cs) => cs.tags?.includes(selectedTag))
 
   return (
     <>
