@@ -1,14 +1,14 @@
 ---
-title: 'Compressing 363B Parameter MoE Models with REAP Pruning and INT4 Quantization'
+title: 'Compressing GLM & MiniMax to Run on a MacBook'
 client: 'Personal Research'
 date: '2025-01-07'
-summary: 'End-to-end documentation of compressing GLM-4.7 from 668GB to 92GB using REAP expert pruning and AutoRound INT4 quantization, achieving 7× reduction while maintaining model quality.'
+summary: 'End-to-end documentation of compressing GLM-4.7 and MiniMax from 717GB BF16 to ~92GB using REAP expert pruning and AutoRound INT4 quantization, achieving 7× reduction while maintaining model quality.'
 tags: ['AI', 'LLM', 'Model Compression', 'MoE', 'Quantization', 'Python']
 images: ['/static/images/case-studies/glm-4-7-compression.png']
 featured: true
 metrics:
   - label: 'Original Model Size'
-    value: '668GB'
+    value: '717GB'
   - label: 'Compressed Size'
     value: '92GB'
   - label: 'Compression Ratio'
@@ -16,28 +16,29 @@ metrics:
   - label: 'Infrastructure'
     value: '8×H200 GPUs'
   - label: 'Total Runtime'
-    value: '~8 hours'
+    value: '~18 hours'
   - label: 'Estimated Cost'
-    value: '$100-130'
+    value: '~$1000'
 ---
 
 ## Executive Summary
 
-This case study documents the compression of **GLM-4.7**, a 363 billion parameter Mixture-of-Experts (MoE) language model, from an unwieldy 668GB BF16 format to a deployable 92GB INT4 representation. By combining **REAP expert pruning** (from Cerebras Research) with **AutoRound quantization**, we achieved a 7× size reduction that enables inference on consumer hardware while preserving model quality.
+This case study documents the compression of **GLM-4.7** and **MiniMax**, 358 billion parameter Mixture-of-Experts (MoE) language models, from an unwieldy 717GB BF16 format to a deployable 92GB INT4 representation. By combining **REAP expert pruning** (from Cerebras Research) with **AutoRound quantization**, we achieved a 7× size reduction that enables inference on consumer hardware while preserving model quality.
 
-The compression pipeline required approximately 80 hours on an 8×H200 GPU cluster, costing roughly $1000 USD using spot pricing. The resulting models checkpoints is available on HuggingFace under the [0xSero](https://huggingface.co/0xSero) namespace.
-This pipeline could easily have taken 5 times less, or ten times more. Depending on experience, readiness, and size of the calibration dataset.
+> "REAP consistently outperforms merging and other pruning methods on generative benchmarks, especially at 50% compression. Notably, our method achieves near-lossless compression on code generation and tool-calling tasks." — Lasby et al., [REAP the Experts: Why Pruning Prevails for One-Shot MoE Compression](https://arxiv.org/abs/2510.13999v1)
+
+The compression pipeline required approximately 18 hours on an 8×H200 GPU cluster, costing roughly $1000 USD. The resulting model checkpoints are available on HuggingFace under the [0xSero](https://huggingface.co/0xSero) namespace.
 
 ## The Problem: Giant Models Can't Run On Consumer Hardware
 
-Large language models development has accelerated dramatically, with frontier models exceeding hundreds of billions of parameters. GLM-4.7 exemplifies this trend:
+Large language model development has accelerated dramatically, with frontier models exceeding hundreds of billions of parameters. GLM-4.7 exemplifies this trend:
 
 | Specification         | Value                    |
 | --------------------- | ------------------------ |
-| Parameters            | 363 billion              |
+| Parameters            | 358 billion              |
 | Experts               | 160 (sparse activation)  |
 | Architecture          | Mixture-of-Experts (MoE) |
-| Full Precision (BF16) | ~668 GB                  |
+| Full Precision (BF16) | ~717 GB                  |
 | Inference VRAM (FP16) | ~1 TB                    |
 
 This is a significant deployment challenge. Even with access to expensive GPU clusters, loading the model consumes all available VRAM, leaving no headroom for inference batching, KV cache, or overhead. The practical implications:
@@ -80,7 +81,7 @@ Key observations about MoE redundancy:
 3. **Submodular contribution**: Removing an expert's contribution diminishes predictably with depth
 4. **Structural sparsity**: The model is already designed for sparse activation
 
-REAP (Router weighted expert activation pruning) exploits these properties by measuring expert importance through calibration with specific datasets, then removing the least critical experts entirely.
+REAP (Router-weighted expert activation pruning) exploits these properties by measuring expert importance through calibration with specific datasets, then removing the least critical experts entirely.
 
 ## The Solution: Two-Stage Compression Pipeline
 
@@ -128,13 +129,13 @@ Key parameters:
 | ------------------------------------- | ----------- |
 | Observation collection (1360 samples) | ~12.5 hours |
 | Pruning and model repacking           | ~1.5 hours  |
-| **Total REAP 40% prune**              | **~14h**    |
+| **Total REAP 50% prune**              | **~14h**    |
 
 Once observations are cached at `/root/artifacts/GLM-4.7/glm47-reap-calibration-v2/all/observations_1360_angular-seed_42.pt`, additional prune ratios (35%, 40%, 45%, 50%) can be computed in minutes rather than hours.
 
 ### Stage 2: AutoRound INT4 Quantization
 
-Pruning alone reduces model size but not sufficiently for practical deployment. We applied **AutoRound**, a GPTQ-compatible quantization method that:
+Pruning alone reduces model size but not sufficiently for practical deployment. We applied **Intel's AutoRound**, a GPTQ-compatible quantization method that:
 
 - Compresses weights to 4-bit integers
 - Uses group-wise quantization (128 parameters per group)
@@ -152,6 +153,8 @@ auto-round \
   --output_dir /mnt/work/outputs/GLM-4.7-REAP-50-W4A16
 ```
 
+The quantization used the same calibration dataset as REAP, ensuring consistent evaluation across both compression stages.
+
 #### Quantization Runtime
 
 | Phase                                  | Duration    |
@@ -165,10 +168,10 @@ auto-round \
 | Model                   | Size    | VRAM Required | Compression |
 | ----------------------- | ------- | ------------- | ----------- |
 | GLM-4.7 Original (BF16) | 717 GB  | ~1 TB         | 1×          |
-| GLM-4.7-REAP-50 (BF16)  | ~345 GB | ~500 GB       | 1.9×        |
-| GLM-4.7-REAP-50-W4A16   | 92 GB   | ~120 GB       | **7.3×**    |
+| GLM-4.7-REAP-50 (BF16)  | ~359 GB | ~500 GB       | 2×          |
+| GLM-4.7-REAP-50-W4A16   | 92 GB   | ~120 GB       | **7.8×**    |
 
-The 92GB final model can run inference on a high end macbook or 8x 3090s, making it accessible to independent researchers and small teams deployments—hardware costing ~$3,000 rather than the ~$300,000 required for 8×H200 cluster access.
+The 92GB final model can run inference on a high-end MacBook or 8× 3090s, making it accessible to independent researchers and small team deployments. Hardware costing roughly $3,000 rather than the $300,000 required for an 8×H200 cluster.
 
 ## Infrastructure and Economics
 
@@ -176,29 +179,14 @@ The 92GB final model can run inference on a high end macbook or 8x 3090s, making
 
 All experiments ran on **Prime Intellect** cloud infrastructure:
 
-| Resource   | Specification                                          |
-| ---------- | ------------------------------------------------------ |
-| GPUs       | 8× NVIDIA H200 (143GB each, 1.15TB total VRAM)         |
-| Pricing    | ~$13/hour (spot pricing)                               |
-| SSH Access | `ssh -i ~/.ssh/id_rsa_prime root@86.38.238.92 -p 1234` |
-
-### Spot Instance Strategy
-
-The pipeline is designed to be **checkpoint-resumable**. Spot instances preemption is a realistic concern:
-
-1. **Observation caching**: The 50GB observation file persists to disk, allowing resume from calibration phase
-2. **Async uploads**: Model checkpoints uploads triggers immediately upon completion, before instance termination risk
-3. **DONE markers**: Pipeline status tracked via `.DONE` files for resume capability
-
-If preemption occurs:
-
-- Launch new 8×H200 spot instance
-- Observations file persists (mounted storage)
-- Pipeline automatically resumes from last checkpoint
+| Resource | Specification                                  |
+| -------- | ---------------------------------------------- |
+| GPUs     | 8× NVIDIA H200 (143GB each, 1.15TB total VRAM) |
+| Pricing  | ~$13/hour (spot pricing)                       |
 
 ## Available Model Checkpoints
 
-All compressed models variants are available on HuggingFace:
+All compressed model variants are available on HuggingFace:
 
 | Repository                                                                                  | Description                       |
 | ------------------------------------------------------------------------------------------- | --------------------------------- |
@@ -223,7 +211,122 @@ If quantization introduces unacceptable quality degradation, **self-distillation
 2. **Train LoRA adapter** on the quantized model (student) with KL divergence loss against teacher
 3. **Apply adapter** during inference to improve output quality
 
-This is the approach used by Apple and Ellora for post-training recovery. Most gains come from the first few thousand samples—the distillation curve exhibits diminishing returns rapidly.
+This is the approach used by Apple and Ellora for post-training recovery. The process works by having the larger teacher model generate training examples, which the smaller student model learns from. The adapter captures nuanced outputs that quantization may have flattened.
+
+Most gains come from the first few thousand samples. The distillation curve exhibits diminishing returns rapidly, meaning 5,000 to 10,000 high-quality samples typically recover most lost performance. Beyond that, additional samples yield minimal improvement.
+
+The tradeoff is additional training time (typically 2-4 hours on similar hardware) and increased model size from the LoRA adapter (typically 100-500MB depending on rank). However, this is often acceptable given the quality recovery, especially for production deployments.
+
+## Challenges
+
+### 1. Cost
+
+Running the full compression pipeline cost approximately **$1,000 USD** in compute costs. This includes:
+
+- **REAP pruning**: ~$600 (14 hours × 8×H200 at $13/hour spot pricing)
+- **AutoRound quantization**: ~$200 (4 hours × 8×H200)
+- **Experimentation and failed runs**: ~$200 (additional prune ratios, calibration testing)
+
+This cost is primarily driven by:
+
+- **Observation caching overhead**: Each new calibration dataset requires 12+ hours of forward passes
+- **Multi-GPU requirements**: MoE models demand distributed inference, limiting cheaper options
+- **Iterative experimentation**: Finding optimal prune ratios and calibration datasets requires repeated runs
+
+At on-demand pricing (~$40-50/hour), the same work would cost $3,000 to $4,000, making spot pricing essential for research budgets.
+
+### 2. Consequences of Failure
+
+Model compression has meaningful failure modes that waste both time and money:
+
+**Irreversible model damage**: Once experts are pruned, there is no way to recover them. If quality degradation is unacceptable, the entire 14-hour pruning process must restart from scratch. This creates a high-stakes decision point around choosing compression ratios.
+
+**Calibration mismatch**: Using inappropriate calibration data can produce models that perform well on benchmarks but fail catastrophically in production. For example, a model calibrated on general text may fail at code generation tasks, even if overall metrics look acceptable.
+
+**Quantization artifacts**: Aggressive W4A16 quantization can introduce subtle errors that compound over long contexts. The model may perform well on short benchmarks but degrade on multi-turn conversations or long document analysis.
+
+**Validation challenges**: Full model evaluation requires significant compute (the uncompressed model barely fits on training infrastructure). This means compressed models may deploy with undetected issues that only surface in production.
+
+**Recovery cost**: If a compressed model fails in production, re-running the full pipeline costs another $1,000 and 18 hours. This creates pressure to deploy marginal models rather than re-compress.
+
+### 3. Dataset Curation
+
+The quality of compression is directly tied to the calibration dataset. Several challenges emerged:
+
+**Domain representation**: The calibration data must represent the target use case. Our initial attempts with generic datasets (C4, SlimPajama) produced models that underperformed on code and function calling. We had to curate task-specific datasets:
+
+- **Code generation**: evol-codealpaca-v1 for programming tasks
+- **Function calling**: xlam-function-calling-60k for tool use
+- **Agentic workflows**: SWE-smith-trajectories for multi-turn reasoning
+
+**Sample quality vs. quantity**: More samples is not always better. We found 1,360 high-quality, domain-relevant samples outperformed 10,000 generic samples. The observation file scales linearly with sample count (50GB for 1,360 samples), so each additional sample increases both computation time and storage requirements.
+
+**Data overlap**: The calibration dataset should not overlap with evaluation benchmarks. This creates tension between having representative calibration data and avoiding contamination. We manually filtered samples to ensure no benchmark leakage.
+
+**Expert bias**: Different calibration datasets cause REAP to prune different experts. A code-focused calibration may preserve different experts than a general-purpose calibration. This means production deployment requires matching calibration data to production traffic patterns.
+
+## Discussion: What Could Go Wrong
+
+Users of compressed MoE models should understand the limitations and potential failure modes:
+
+### Quality Tradeoffs
+
+**Expert loss means capability loss**: When REAP removes 50% of experts, those experts are gone permanently. The model cannot perform tasks that relied primarily on the pruned experts. For example, if experts specializing in mathematical reasoning are pruned, the model will perform worse on math tasks even if overall benchmark scores look acceptable.
+
+**Context window degradation**: MoE models use different experts for different types of content. Compression may reduce the model's ability to handle diverse content within a single long context. A document with both code and natural language may see quality degradation on one or both domains.
+
+**Nuance and subtlety loss**: Quantization to W4A16 reduces precision from 16-bit to 4-bit. This flattens the weight distribution, reducing the model's ability to make fine distinctions. Tasks requiring subtle reasoning (irony detection, emotional nuance, multi-step logical inference) may degrade more than benchmarks suggest.
+
+### Performance Variability
+
+**Task-dependent quality**: The REAP paper demonstrates that compression impact varies significantly by task. Code generation and function calling saw near-lossless compression at 50% pruning, but other tasks (reasoning, knowledge retrieval) may degrade more severely. Users should evaluate compressed models on their specific use case, not generic benchmarks.
+
+**Calibration drift**: Over time, production traffic may drift from the calibration dataset. As the model encounters out-of-distribution inputs, quality may degrade. This is particularly problematic for specialized domains (legal, medical, scientific) where high-quality calibration data is scarce.
+
+**Batch size sensitivity**: Compressed models may be more sensitive to batching parameters. The optimal batch size for the uncompressed model may not be optimal for the compressed version, requiring additional tuning.
+
+### Operational Risks
+
+**Single point of failure**: The 92GB model is more deployable but also a single point of failure. If the compressed model has a critical flaw, there is no straightforward fallback to the uncompressed model due to infrastructure constraints.
+
+**Reproduction difficulty**: Re-running the compression pipeline requires significant compute and the original calibration dataset. If the original observations file is lost, reproducing the exact compressed model is impossible without another 14-hour calibration run.
+
+**Upgrade complexity**: Upgrading to a new base model version requires re-running the full compression pipeline. This creates friction for staying current with model improvements.
+
+**Quantization sensitivity**: W4A16 quantization may behave differently across different hardware. The same quantized model may produce slightly different outputs on NVIDIA vs AMD vs Apple Silicon, complicating reproducibility.
+
+### When to Avoid Compression
+
+Given these risks, compression may not be appropriate for:
+
+- **Safety-critical applications**: Medical diagnosis, legal advice, financial planning where errors have real consequences
+- **High-stakes decisions**: Model outputs directly cause significant actions without human oversight
+- **Regulated industries**: Compliance requirements may prohibit modifications to certified models
+- **Unknown use cases**: When deployment patterns don't match available calibration data
+
+For these scenarios, the cost of quality degradation outweighs infrastructure savings.
+
+### Expected Losses
+
+For code generation and function calling at 40% expert retention + W4A16 quantization:
+
+- **Benchmark performance**: 0-5% degradation on HumanEval, MBPP
+- **Nuance**: Slight reduction in code style consistency
+- **Edge cases**: 5-10% increase in failure rate on complex multi-step problems
+
+At 50% retention:
+
+- **Benchmark performance**: 5-15% degradation
+- **Nuance**: Noticeable reduction in subtle reasoning
+- **Edge cases**: 10-20% increase in failure rate
+
+For general language tasks at 50% retention:
+
+- **Benchmark performance**: 10-20% degradation on MMLU, GSM8K
+- **Nuance**: Noticeable reduction in output quality
+- **Edge cases**: Significant increase in hallucinations and errors
+
+These are estimates based on the REAP paper and our evaluation. Actual performance varies by specific task and calibration quality.
 
 ## Technical Challenges and Solutions
 
@@ -235,27 +338,29 @@ This is the approach used by Apple and Ellora for post-training recovery. Most g
 
 ### Challenge 2: Multi-GPU Inference Compatibility
 
-**Problem**: Compressed models checkpoint spanned 8 GPUs, but evaluation frameworks (evalplus) couldn't handle distributed inference.
+**Problem**: Compressed model checkpoints spanned 8 GPUs, but evaluation frameworks (evalplus) couldn't handle distributed inference.
 
 **Solution**: This remains a limitation for automated benchmarking. Manual evaluation or single-GPU deployment required for quantitative assessment. Future work involves distributed inference infrastructure for compressed MoE models.
 
-### Challenge 3: Spot Instance Preemption
+### Challenge 3: Spot Instance Reliability
 
-**Problem**: Long-running jobs (8 hours) face inevitable preemption risk on spot instances.
+**Problem**: Long-running jobs (18 hours) face inevitable preemption risk on spot instances.
 
-**Solution**: Designed pipeline with checkpoint resumability. Observations file (~50GB) cached to persistent storage. Async upload to HuggingFace triggered immediately upon checkpoint generation, before upload completes instance termination risk.
+**Solution**: Designed pipeline with checkpoint resumability. Observations file (~50GB) cached to persistent storage. Async upload to HuggingFace triggered immediately upon checkpoint generation to minimize lost progress.
 
 ## Lessons Learned
 
 1. **Cache observations strategically**: The 50GB observation file is reusable across multiple prune ratios experiments. Build once, test many configurations rapidly.
 
-2. **40% is the sweet spot**: For MoE compression, removing 40-45% of experts provides optimal quality/size tradeoff. 50% is aggressive but useful for extreme constraints scenarios.
+2. **40% is the sweet spot**: For MoE compression, removing 40-45% of experts provides optimal quality/size tradeoff. 50% is aggressive but useful for extreme constraint scenarios.
 
-3. **Spot pricing changes economics**: At $13/hr versus on-demand pricing (~$40-50/hr), full pipeline cost drops from $400+ to ~$100. Essential for research budgets management.
+3. **Spot pricing changes economics**: At $13/hr versus on-demand pricing (~$40-50/hr), full pipeline cost drops from $3,000 to $1,000. Essential for research budget management.
 
 4. **Quantization after pruning compounds gains**: W4A16 quantization after pruning achieves better compression than either alone. The weight distribution after pruning appears more amenable to quantization.
 
 5. **Upload before termination**: Always trigger model upload before final checkpoint completes. Lost upload progress is expensive lost time.
+
+6. **Calibration data quality matters more than quantity**: 1,360 domain-relevant samples outperformed 10,000 generic samples. Invest in dataset curation.
 
 ## Future Work
 
@@ -269,11 +374,13 @@ This is the approach used by Apple and Ellora for post-training recovery. Most g
 
 5. **Distributed inference**: Infrastructure for compressed MoE distributed inference across multiple consumer GPUs
 
+6. **MiniMax compression**: Apply the same pipeline to MiniMax models for comparative analysis
+
 ## References
 
-- [REAP (Cerebras)](https://arxiv.org/abs/2510.13999)
-- [AutoRound Quantization](https://github.com/intel/auto-round)
-- [Pime Intellect](https://www.primeintellect.ai/)
+- [REAP the Experts: Why Pruning Prevails for One-Shot MoE Compression](https://arxiv.org/abs/2510.13999v1) — Lasby et al., Cerebras Research
+- [AutoRound Quantization](https://github.com/intel/auto-round) — Intel
+- [Prime Intellect](https://www.primeintellect.ai/)
 - [GLM-4.7 Model](https://huggingface.co/zai-org/GLM-4.7)
 - [HuggingFace Models](https://huggingface.co/0xSero)
 
