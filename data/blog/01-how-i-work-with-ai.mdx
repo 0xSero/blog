@@ -151,7 +151,7 @@ Based on the data, here is what I am changing.
 
 ### 1. Add repro template
 
-```
+````
 ## Error
 [exact error message]
 
@@ -167,23 +167,25 @@ Based on the data, here is what I am changing.
 
 ### 2. Test discipline checklist
 
-```
+````
+
 - [ ] Write test before fix
 - [ ] Run tests after fix
 - [ ] Add regression check
 - [ ] Document test coverage
-```
+
+````
 
 ### 3. Security scan before commit
 
 ```bash
 # Pre-commit hook
 grep -r "sk-\\|pk-\\|0x[a-fA-F0-9]{64}" --exclude-dir=node_modules
-```
+````
 
 ### 4. Acceptance criteria for delegation
 
-```
+````
 ## Deliverables
 - [ ] File A modified
 - [ ] File B created
@@ -234,3 +236,8 @@ And now that it is true, I can work with it.
 Continue to Part 2: Training My Own Coding Model, where I take these insights and my actual conversations to train sero-nouscoder.
 
 _Data: 809 conversations, 19,539 messages, 16,484 tool uses, 4 months of AI-assisted development. Analysis: privacy-preserving, k-anonymous, heuristic-based. Verdict: honest._
+
+```
+
+```
+````
