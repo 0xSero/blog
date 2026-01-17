@@ -1,0 +1,245 @@
+---
+title: 'Part 2: Training My Own Coding Model — The SFT and DPO Pipeline'
+date: '2025-01-17'
+tags: ['AI', 'Machine Learning', 'Fine-tuning', 'Personal Projects']
+part: 2
+sequence: workstyle-report-and-sero-nouscoder
+draft: false
+summary: 'What happens when you fine-tune a 14B parameter model on your own coding conversations? Real numbers, real costs, and real frustrations.'
+---
+
+From Part 1, I know I leak sensitive data and delegate testing. So when I built a coding assistant trained on my conversations, fixing those problems required concrete choices in how I prepared and trained the data.
+
+This is the full pipeline. PII scan, masking, temporal ordering, dedup, SFT, and DPO pairs.
+
+## What the Raw Data Looked Like
+
+Over 12 months I collected AI coding conversations from three main sources:
+
+- Claude Projects exports
+- Cursor IDE logs
+- Codex sessions
+
+Total raw data was around 727MB, about 107k conversations. A lot of it was not safe or not usable.
+
+107,502 conversations total. After scanning for secrets, 95,561 got quarantined. That is 89% of my data flagged for potential API keys, private keys, or AWS credentials.
+
+11,711 conversations survived security checks. 51.75 million tokens. Enough to fill 1,200 copies of The Great Gatsby with nothing but code and error messages.
+
+## Reconstruction and Temporal Ordering
+
+A big chunk of work was reconstructing conversations so they were in the right order.
+
+Cursor v2 stores Composer and Agent chats in a different place than old chat mode. The Composer bubbles live in:
+
+```
+~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
+Table: cursorDiskKV
+Keys: composerData:{uuid} and bubbleId:{composer-id}:{bubble-id}
+```
+
+Those bubbles include timestamps. I sorted messages by timestamp so the conversation order is stable before anything else happens.
+
+For Claude, I grouped raw events by sessionId, dropped sidechain messages for SFT, and chunked long sessions into windows so they fit context limits. This gives me real multi-turn conversations, not random message shards.
+
+## Dedup That Survives Time
+
+After reconstruction and ordering, I deduplicate by a stable trace ID derived from the conversation content. That catches duplicates across sources and across time.
+
+Numbers from the build:
+
+- Duplicates skipped: 13,634
+- Sessions rebuilt from raw Claude logs: 4,747
+- Chunks written from those sessions: 5,007
+
+This matters because raw logs contain the same thread in multiple places. If you dedup before ordering, hashes are unstable. Order first, then dedup.
+
+## PII Scan and Masking
+
+I did not trust myself to manually review 100k conversations. Everything goes through a scan and masking step first.
+
+What I scan for:
+
+- API keys and tokens
+- Private keys
+- Database URLs
+- Local paths like /Users/sero
+
+Then I apply a redaction policy that masks patterns and rewrites local paths to /<ABS>/.
+
+From the final SFT run:
+
+- 95,561 conversations quarantined
+- High risk markers quarantined: 79
+- Path rewrites: 75,127
+- Pattern replacements included GitHub tokens, HF tokens, OpenAI keys, Anthropic keys, Slack tokens
+
+Prepared outputs are scanned again and come back clean with 0 hits. The quarantine file only stores row pointers and reasons. No raw text leaks.
+
+## Did I Train on Single Pairs
+
+No. The SFT dataset uses full multi-turn conversations. Some sources are only pairs, but most are not. The final SFT output has:
+
+- Average 8.4 messages per conversation
+- p50 of 2 messages, p90 of 19
+
+The model sees real back and forth, not just single question and answer pairs.
+
+## The SFT Dataset
+
+Final split:
+
+- Train: 11,711
+- Validation: 107
+- Test: 123
+
+Domain mix from samples:
+
+- Solidity and Web3 around 35%
+- TypeScript and Node around 30%
+- Python around 20%
+- SQL around 10%
+- Other around 5%
+
+This matches what I actually work on.
+
+## SFT Training Config
+
+I trained a LoRA adapter on top of NousCoder 14B.
+
+- QLoRA 4-bit
+- LoRA rank 64, alpha 128, dropout 0.05
+- Target modules: q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj
+- Batch size 2, grad accumulation 8
+- Max length 4096, packing enabled
+- Learning rate 2e-5, cosine schedule
+- 3 epochs target, timed out at 2.52
+
+Infra:
+
+- HuggingFace Jobs
+- A100 80GB
+- 18 hours
+- Cost around $47
+
+## Results
+
+- Final loss: 0.685
+- Token accuracy: 81.6%
+- Total tokens: 51.75M
+- Training stopped at 93% completion due to job timeout
+
+The checkpoint still works. I use it daily.
+
+## What It Learned
+
+The model absorbed my patterns:
+
+- OpenZeppelin imports (35% of training data was Solidity)
+- ethers.js v6 (not v5, because I debugged the differences)
+- Type annotations in TypeScript
+- Error handling that actually catches things
+- Concise explanations followed by code blocks
+
+First test: "Write a Solidity ERC20 token"
+
+It generated valid code with OpenZeppelin. Used the correct import paths. Included permit functionality (EIP-2612) without being asked. The model remembered my style better than I do.
+
+## The Artifacts
+
+Three problems emerged immediately.
+
+### 1. Thinking tags
+
+The model outputs `</think>` blocks it needs to hide. Training data must have included my private thought process. DPO alignment would fix this.
+
+### 2. Incomplete responses
+
+Sometimes it cuts off mid-sentence. Classic max_tokens issue mixed with incomplete training. I see this in production deployments constantly. The model needs room to breathe.
+
+### 3. Latency
+
+8 seconds per response. Local vLLM would be 1 to 2 seconds, but that means hosting a 30GB model. Trade-offs.
+
+## Deploying to Production
+
+The model lives at `https://api.homelabai.org/v1`. It is serving at 200 tokens/second. I am using it in Cursor. It suggests code that looks like code I would write, which is either brilliant or terrifying.
+
+Benchmark results: 10/10 success rate across Solidity, TypeScript, Python, SQL. Speed: 57 tokens/sec average. Cost: my electricity bill.
+
+## DPO Pairs and Alignment Plan
+
+I prepared preference pairs for DPO. These are mined from Claude sidechains where draft response becomes rejected and final response becomes chosen.
+
+- Total pairs: 4,532
+- Train: 4,443
+- Validation: 46
+- Test: 43
+
+One caveat. Sidechain mining tends to create long chosen vs short rejected pairs. That can bias the model toward verbosity unless you reweight or filter. I plan to handle that in the DPO run.
+
+## Where the Model Lives
+
+Model card and files:
+
+- https://huggingface.co/0xSero/sero-nouscoder-14b-sft
+
+It is a LoRA adapter, not a merged model. I serve it via vLLM with a base model behind an API.
+
+## How I Use It
+
+I run it through an OpenAI-compatible endpoint:
+
+```bash
+curl https://api.homelabai.org/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_TOKEN>" \
+  -d '{
+    "model": "sero-nouscoder",
+    "messages": [{"role": "user", "content": "Write a Solidity ERC20 token"}],
+    "max_tokens": 500,
+    "temperature": 0.7
+  }'
+```
+
+## The Economics
+
+This is where it gets interesting:
+
+- Total project cost: $47
+- Remaining budget: $103 (started with $150)
+- Time investment: 2 days data prep, 18 hours training
+- Result: A coding assistant that knows my preferences
+
+Compare to ChatGPT Pro at $20/month. This cost me 2.3 months of subscription, but I own the model. No rate limits. No context windows shared with millions. Actual privacy.
+
+## What I Am Changing Next
+
+- Longer timeouts so epoch 3 completes
+- Real-time loss logging
+- DPO alignment on preference pairs
+- GPTQ or AWQ quantization for smaller deployment
+
+## The Verdict
+
+This project changed my mental model of AI. I thought fine-tuning required PhDs and data centers. Reality: one person, one weekend, $47.
+
+The model is not perfect. It shows training artifacts. It is 93% complete. But it codes like me, understands my project patterns, and runs on hardware I control.
+
+Next step: DPO alignment with 4,532 preference pairs. Cost: $7. The training artifacts disappear. The model learns to prefer concise over verbose, direct over circular.
+
+Then quantization to GPTQ 4-bit. Cost: $3. Another 2 hours. 30GB becomes 8GB. Runs on an RTX 4090.
+
+Total pipeline cost: $57
+Final model size: 8GB
+Inference speed: 150 to 250 tokens/sec locally
+
+The math works. Personal AI is not just possible. It is practical.
+
+---
+
+I am keeping the API running for daily use. The model gets better with practice. Not through more training, but through learning what to ask it. That is the real secret: the tool shapes the craft, but the craft shapes the tool.
+
+_Continued from Part 1: How I Actually Work With AI_
+
+_Training: $47, 18 hours on A100, 51.75M tokens. Final loss: 0.685, accuracy: 81.6%._

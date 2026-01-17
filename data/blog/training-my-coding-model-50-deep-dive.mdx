@@ -1,0 +1,102 @@
+---
+title: 'Training My Own Coding Model: The $50 Deep Dive'
+date: '2025-01-17'
+tags: ['AI', 'Machine Learning', 'Fine-tuning', 'Personal Projects']
+draft: false
+summary: 'What happens when you fine-tune a 14B parameter model on your own coding conversations? Real numbers, real costs, and real frustrations.'
+---
+
+I spent $47 training a 14-billion parameter model to code like me. Not because I'm special, but because I wanted to see if generic AI assistants could become personal ones. Here's what actually happened.
+
+## The Data Problem
+
+I had 727MB of AI conversation logs scattered across three sources:
+
+- Claude Projects: 233MB
+- Cursor IDE logs: 254MB
+- Claude.ai exports: 240MB
+
+107,502 conversations total. After scanning for secrets, 95,561 got quarantined. That's 89% of my data flagged for potential API keys, private keys, or AWS credentials. The human brain is terrible at remembering what it leaked.
+
+11,711 conversations survived security checks. 51.75 million tokens. Enough to fill 1,200 copies of _The Great Gatsby_ with nothing but code and error messages.
+
+## The Training Run
+
+I used QLoRA. Don't let the acronym fool you-it's the difference between $47 and $470.
+
+**Base model:** NousCoder-14B (30GB)
+**Adapter:** 260MB LoRA (freezes the base, trains tiny matrices)
+**Hardware:** A100 80GB
+**Time:** 18 hours before timeout
+**Cost:** $2.50/hour
+
+The loss curve dropped from 1.355 to 0.685 in 18 hours. Token accuracy hit 81.6%. Training stopped at 93% completion because HuggingFace jobs have hard limits. I'll take 93% over nothing.
+
+## What It Learned
+
+The model absorbed my patterns:
+
+- OpenZeppelin imports (35% of training data was Solidity)
+- ethers.js v6 (not v5, the version matters when you've debugged the differences)
+- Type annotations in TypeScript
+- Error handling that actually catches things
+- Concise explanations followed by code blocks
+
+First test: "Write a Solidity ERC20 token"
+
+It generated valid code with OpenZeppelin. Used the correct import paths. Included permit functionality (EIP-2612) without being asked. The model remembered my style better than I do.
+
+## The Artifacts
+
+Three problems emerged immediately:
+
+1. **Thinking tags:** The model outputs `<think>` blocks it needs to hide. Training data must have included my private thought process. DPO alignment would fix this.
+
+2. **Incomplete responses:** Sometimes cuts off mid-sentence. Classic max_tokens issue mixed with incomplete training. I see this in production deployments constantly. The model needs room to breathe.
+
+3. **Latency:** 8 seconds per response. Local vLLM would be 1-2 seconds, but that means hosting a 30GB model. Trade-offs.
+
+## Deploying to Production
+
+The model lives at `https://api.homelabai.org/v1`. It's serving at 200 tokens/second. I'm using it in Cursor. It suggests code that looks like code I would write, which is either brilliant or terrifying.
+
+**Benchmark results:** 10/10 success rate across Solidity, TypeScript, Python, SQL. Speed: 57 tokens/sec average. Cost: my electricity bill.
+
+## The Economics
+
+This is where it gets interesting:
+
+**Total project cost:** $47
+**Remaining budget:** $103 (started with $150)
+**Time investment:** 2 days data prep, 18 hours training
+**Result:** A coding assistant that knows my preferences
+
+Compare to ChatGPT Pro at $20/month. This cost me 2.3 months of subscription, but I own the model. No rate limits. No context windows shared with millions. Actual privacy.
+
+## What I'd Do Differently
+
+**Packing strategy:** I used packing (multiple samples per sequence). Worked fine. Could increase gradient accumulation steps for more stable training. The model didn't overfit, so I had headroom.
+
+**Timeout settings:** Set 18 hours, needed 24. The last 7% of epoch 3 might have helped. Might not have. The checkpoint works.
+
+**Real-time monitoring:** HuggingFace lost logs after timeout. I'd stream metrics to my own dashboard next time. Visibility matters when you're burning GPU hours.
+
+## The Verdict
+
+This project changed my mental model of AI. I thought fine-tuning required PhDs and data centers. Reality: one person, one weekend, $47.
+
+The model isn't perfect. It shows training artifacts. It's 93% complete. But it codes like me, understands my project patterns, and runs on hardware I control.
+
+Next step: DPO alignment with 4,532 preference pairs. Cost: $7. The training artifacts disappear. The model learns to prefer concise over verbose, direct over circular.
+
+Then quantization to GPTQ 4-bit. Cost: $3. Another 2 hours. 30GB becomes 8GB. Runs on an RTX 4090.
+
+**Total pipeline cost:** $57
+**Final model size:** 8GB
+**Inference speed:** 150-250 tokens/sec locally
+
+The math works. Personal AI isn't just possible-it's practical.
+
+---
+
+I'm keeping the API running for daily use. The model gets better with practice. Not through more training, but through learning what to ask it. That's the real secret: the tool shapes the craft, but the craft shapes the tool.
