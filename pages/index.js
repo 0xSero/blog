@@ -702,9 +702,10 @@ export default function Index() {
 
     const getClearRadius = (width, height, config) => {
       const minDim = Math.min(width, height)
+      const isMobile = width < 640
       const contentDiameter = Math.max(contentBounds.width, contentBounds.height)
       const contentRadius = contentDiameter * 0.5
-      const padding = contentRadius * 0.1
+      const padding = contentRadius * (isMobile ? 0.2 : 0.1)
       const targetRadius = contentRadius + padding
       const maxRadius = minDim * 0.48
 
