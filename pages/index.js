@@ -810,7 +810,7 @@ export default function Index() {
         <div ref={contentWrapperRef} className="flex flex-col items-center">
           {/* Title */}
           <h1
-            className={`relative z-10 mb-2 text-3xl font-bold tracking-tight transition-all duration-1000 sm:mb-4 sm:text-4xl md:text-6xl ${
+            className={`relative z-10 mb-2 text-xl font-bold tracking-tight transition-all duration-1000 sm:mb-4 sm:text-3xl md:text-6xl ${
               isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
             style={{
@@ -825,7 +825,7 @@ export default function Index() {
           <button
             onClick={handleEnter}
             onKeyPress={handleKeyPress}
-            className={`group relative z-10 mt-6 overflow-hidden border-2 px-6 py-2.5 text-base font-medium transition-all duration-1000 sm:mt-8 sm:px-8 sm:py-3 sm:text-lg ${
+            className={`group relative z-10 mt-4 overflow-hidden border-2 px-4 py-2 text-sm font-medium transition-all duration-1000 sm:mt-8 sm:px-8 sm:py-3 sm:text-lg ${
               isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
             style={{
@@ -846,7 +846,7 @@ export default function Index() {
 
           {/* Tagline */}
           <p
-            className={`relative z-10 mt-4 text-xs tracking-widest transition-all duration-1000 sm:mt-6 sm:text-sm ${
+            className={`relative z-10 mt-3 text-[10px] tracking-widest transition-all duration-1000 sm:mt-6 sm:text-sm ${
               isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
             style={{
