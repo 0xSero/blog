@@ -14,6 +14,11 @@ export async function getStaticProps() {
 export default function CaseStudies({ caseStudies }) {
   const [selectedTag, setSelectedTag] = useState('All')
 
+  // DEBUG: Log case studies count
+  if (typeof window !== 'undefined') {
+    console.log(`[Case Studies] Loaded ${caseStudies.length} case studies`)
+  }
+
   const allTags = ['All', ...new Set(caseStudies.flatMap((cs) => cs.tags || []))]
 
   // Sort by date descending (newest first), then filter by tag
