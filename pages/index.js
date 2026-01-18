@@ -626,6 +626,7 @@ export default function Index() {
   const animationRef = useRef(null)
   const transitionRef = useRef(false)
   const transitionProgressRef = useRef(0)
+  const contentRef = useRef(null)
 
   const handleEnter = () => {
     setIsTransitioning(true)
@@ -657,13 +658,13 @@ export default function Index() {
     let fibers = []
     let pattern = null
     let startTime = performance.now()
+    let contentBounds = { width: 0, height: 0 }
 
     // Resolve pattern from URL or pick random
     const patternParam = params.get('pattern')
     const activeConfig = resolvePatternFromParam(patternParam)
 
-    const createPatternInstance = (width, height) => {
-      const minDim = Math.min(width, height)
+    const getPatternConfig = (width) => {
       const isMobile = width < 640
 
       // Mobile: use width-based layout since screen is tall and narrow
@@ -693,16 +694,29 @@ export default function Index() {
         tri: {},
       }
 
-      const patternConfig = {
+      return {
         ...activeConfig,
         ...(mobileOverrides[activeConfig.key] || {}),
       }
+    }
 
-      // For mobile: 45% of width as radius = 90% of screen width as diameter
-      // For desktop: use minDim-based calculation
-      const clearRadius = isMobile
+    const getClearRadius = (width, height, config) => {
+      const minDim = Math.min(width, height)
+      const isMobile = width < 640
+      const contentDiameter = Math.max(contentBounds.width, contentBounds.height)
+      const contentRadius = contentDiameter * 0.5
+      const padding = Math.max(16, minDim * 0.05)
+      const safeRadius = Math.min(minDim * 0.48, contentRadius + padding)
+      const baseRadius = isMobile
         ? width * 0.45
-        : minDim * (patternConfig.clearRadius || activeConfig.clearRadius)
+        : minDim * (config.clearRadius || activeConfig.clearRadius)
+
+      return Math.max(baseRadius, safeRadius)
+    }
+
+    const createPatternInstance = (width, height) => {
+      const patternConfig = getPatternConfig(width)
+      const clearRadius = getClearRadius(width, height, patternConfig)
       return createPattern(activeConfig.key, width, height, patternConfig, clearRadius)
     }
 
@@ -718,24 +732,25 @@ export default function Index() {
       const height = window.innerHeight
       fibers = buildFibers(width, height)
       pattern = createPatternInstance(width, height)
+
+      if (contentRef.current) {
+        const rect = contentRef.current.getBoundingClientRect()
+        contentBounds = {
+          width: rect.width,
+          height: rect.height,
+        }
+      }
     }
 
     resize()
     window.addEventListener('resize', resize)
-
-    // Store clearRadius from pattern creation for use in animate
-    let storedClearRadius = 0
 
     const animate = (currentTime) => {
       const width = canvas.width / canvasScale
       const height = canvas.height / canvasScale
       const centerX = width / 2
       const centerY = height / 2
-      const isMobile = width < 640
-      // Use mobile-specific clearRadius calculation
-      const clearRadius = isMobile
-        ? width * 0.45
-        : Math.min(width, height) * activeConfig.clearRadius
+      const clearRadius = getClearRadius(width, height, getPatternConfig(width))
 
       // Calculate cycle time (t in 0..1) - loops continuously
       const elapsed = currentTime - startTime
@@ -788,6 +803,7 @@ export default function Index() {
 
       {/* Content overlay */}
       <div
+        ref={contentRef}
         className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${
           isTransitioning ? 'opacity-0' : 'opacity-100'
         }`}
