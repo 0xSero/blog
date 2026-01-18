@@ -626,7 +626,7 @@ export default function Index() {
   const animationRef = useRef(null)
   const transitionRef = useRef(false)
   const transitionProgressRef = useRef(0)
-  const contentRef = useRef(null)
+  const contentWrapperRef = useRef(null)
 
   const handleEnter = () => {
     setIsTransitioning(true)
@@ -730,8 +730,8 @@ export default function Index() {
       fibers = buildFibers(width, height)
       pattern = createPatternInstance(width, height)
 
-      if (contentRef.current) {
-        const rect = contentRef.current.getBoundingClientRect()
+      if (contentWrapperRef.current) {
+        const rect = contentWrapperRef.current.getBoundingClientRect()
         contentBounds = {
           width: rect.width,
           height: rect.height,
@@ -801,59 +801,61 @@ export default function Index() {
 
       {/* Content overlay */}
       <div
-        ref={contentRef}
         className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${
           isTransitioning ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        {/* Title */}
-        <h1
-          className={`relative z-10 mb-2 text-3xl font-bold tracking-tight transition-all duration-1000 sm:mb-4 sm:text-4xl md:text-6xl ${
-            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}
-          style={{
-            color: '#3D2B1F',
-            fontFamily: 'Georgia, serif',
-          }}
-        >
-          Sybil Solutions
-        </h1>
+        {/* Content wrapper for measurement */}
+        <div ref={contentWrapperRef} className="flex flex-col items-center">
+          {/* Title */}
+          <h1
+            className={`relative z-10 mb-2 text-3xl font-bold tracking-tight transition-all duration-1000 sm:mb-4 sm:text-4xl md:text-6xl ${
+              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            }`}
+            style={{
+              color: '#3D2B1F',
+              fontFamily: 'Georgia, serif',
+            }}
+          >
+            Sybil Solutions
+          </h1>
 
-        {/* Enter button */}
-        <button
-          onClick={handleEnter}
-          onKeyPress={handleKeyPress}
-          className={`group relative z-10 mt-6 overflow-hidden border-2 px-6 py-2.5 text-base font-medium transition-all duration-1000 sm:mt-8 sm:px-8 sm:py-3 sm:text-lg ${
-            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}
-          style={{
-            borderColor: '#8B5A2B',
-            color: '#8B5A2B',
-            backgroundColor: 'rgba(245, 240, 232, 0.8)',
-            transitionDelay: '200ms',
-          }}
-        >
-          <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
-            Enter
-          </span>
-          <div
-            className="absolute inset-0 -translate-y-full transition-transform duration-300 group-hover:translate-y-0"
-            style={{ backgroundColor: '#8B5A2B' }}
-          />
-        </button>
+          {/* Enter button */}
+          <button
+            onClick={handleEnter}
+            onKeyPress={handleKeyPress}
+            className={`group relative z-10 mt-6 overflow-hidden border-2 px-6 py-2.5 text-base font-medium transition-all duration-1000 sm:mt-8 sm:px-8 sm:py-3 sm:text-lg ${
+              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            }`}
+            style={{
+              borderColor: '#8B5A2B',
+              color: '#8B5A2B',
+              backgroundColor: 'rgba(245, 240, 232, 0.8)',
+              transitionDelay: '200ms',
+            }}
+          >
+            <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Enter
+            </span>
+            <div
+              className="absolute inset-0 -translate-y-full transition-transform duration-300 group-hover:translate-y-0"
+              style={{ backgroundColor: '#8B5A2B' }}
+            />
+          </button>
 
-        {/* Tagline */}
-        <p
-          className={`relative z-10 mt-4 text-xs tracking-widest transition-all duration-1000 sm:mt-6 sm:text-sm ${
-            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}
-          style={{
-            color: 'rgba(139, 90, 43, 0.7)',
-            transitionDelay: '400ms',
-          }}
-        >
-          SOFTWARE &bull; AI &bull; AUTOMATION
-        </p>
+          {/* Tagline */}
+          <p
+            className={`relative z-10 mt-4 text-xs tracking-widest transition-all duration-1000 sm:mt-6 sm:text-sm ${
+              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+            }`}
+            style={{
+              color: 'rgba(139, 90, 43, 0.7)',
+              transitionDelay: '400ms',
+            }}
+          >
+            SOFTWARE &bull; AI &bull; AUTOMATION
+          </p>
+        </div>
       </div>
     </>
   )
