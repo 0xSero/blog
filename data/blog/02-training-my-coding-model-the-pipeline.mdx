@@ -8,8 +8,6 @@ draft: false
 summary: 'What happens when you fine-tune a 14B parameter model on your own coding conversations? Real numbers, real costs, and real frustrations.'
 ---
 
-From Part 1, I know I leak sensitive data and delegate testing. So when I built a coding assistant trained on my conversations, fixing those problems required concrete choices in how I prepared and trained the data.
-
 This is the full pipeline: PII scan, masking, temporal ordering, dedup, SFT, and DPO pairs.
 
 ## What the raw data looked like
@@ -127,9 +125,8 @@ Infra:
 - Final loss: 0.685
 - Token accuracy: 81.6%
 - Total tokens: 51.75M
-- Training stopped at 93% completion due to job timeout
 
-The checkpoint still works. I use it daily.
+The checkpoint still works.
 
 ## What it learned
 
@@ -149,23 +146,13 @@ It generated valid code with OpenZeppelin. Used the correct import paths. Includ
 
 Three problems emerged immediately:
 
-### 1. Thinking tags
-
-The model outputs `</think>` blocks it needs to hide. Training data must have included my private thought process. DPO alignment would fix this.
-
-### 2. Incomplete responses
-
-Sometimes it cuts off mid sentence. Classic max_tokens issue mixed with incomplete training. I see this in production deployments constantly. The model needs room to breathe.
-
-### 3. Latency
-
-8 seconds per response. Local vLLM would be 1 to 2 seconds, but that means hosting a 30GB model. Trade offs.
+- Besides measuring loss on the training data, how am I suppose to measure the model's performance on unseen data?
+- Is the dataset representative of what I want to do moving forward?
+- If I have been incentivizing the model to learn my style, how do I ensure it doesn't overfit?
 
 ## Deploying to production
 
-The model lives at `https://api.homelabai.org/v1`. It is serving at 200 tokens/second. I am using it in Cursor. It suggests code that looks like code I would write, which is either brilliant or terrifying.
-
-Benchmark results: 10/10 success rate across Solidity, TypeScript, Python, SQL. Speed: 57 tokens/sec average. Cost: my electricity bill.
+The model lives on my linux server https://github.com/0xSero/vllm-studio. It is serving at 100+ tokens/second. I am using it in opencode, and vllm-studio. It suggests code that looks like code I would write but lacks the flexibility of a larger model.
 
 ## DPO pairs and alignment plan
 
@@ -175,8 +162,6 @@ I prepared preference pairs for DPO. These are mined from Claude sidechains wher
 - Train: 4,443
 - Validation: 46
 - Test: 43
-
-One caveat. Sidechain mining tends to create long chosen vs short rejected pairs. That can bias the model toward verbosity unless you reweight or filter. I plan to handle that in the DPO run.
 
 ## Where the model lives
 
@@ -213,32 +198,20 @@ Result: A coding assistant that knows my preferences
 
 Compare to ChatGPT Pro at $20/month. This cost me 2.3 months of subscription, but I own the model. No rate limits. No context windows shared with millions. Actual privacy.
 
-## What I am changing next
+## What I am thinking next
 
-- Longer timeouts so epoch 3 completes
-- Real time loss logging
-- DPO alignment on the preference pairs
-- GPTQ or AWQ quantization for smaller deployment
+- Can this scale to a distributed set of training datasets sources from OSS developers?
+- What size model would make this actually useful on a day to day basis as a daily driver?
+- How can I better structure the dataset to not just show it what i've done but also push it towards better overall behaviour?
+- I need to learn more about RL, SFT, etc..
 
 ## The verdict
 
 This project changed my mental model of AI. I thought fine tuning required PhDs and data centers. Reality: one person, one weekend, $47.
 
-The model is not perfect. It shows training artifacts. It is 93% complete. But it codes like me, understands my project patterns, and runs on hardware I control.
-
-Next step: DPO alignment with 4,532 preference pairs. Cost: $7. The training artifacts disappear. The model learns to prefer concise over verbose, direct over circular.
-
-Then quantization to GPTQ 4 bit. Cost: $3. Another 2 hours. 30GB becomes 8GB. Runs on an RTX 4090.
-
-Total pipeline cost: $57
-Final model size: 8GB
-Inference speed: 150 to 250 tokens/sec locally
-
-The math works. Personal AI is not just possible. It is practical.
+The model is not perfect. It shows training artifacts. But it codes like me, understands my project patterns, and runs on hardware I control.
 
 ---
-
-I am keeping the API running for daily use. The model gets better with practice. Not through more training, but through learning what to ask it. That is the real secret: the tool shapes the craft, but the craft shapes the tool.
 
 _Continued from Part 1: How I actually work with AI_
 

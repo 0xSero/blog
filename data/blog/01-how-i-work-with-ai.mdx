@@ -1,5 +1,5 @@
 ---
-title: 'Part 1: How I Actually Work With AI — The Workstyle Report'
+title: 'Part 1: I ragged every conversation I ever had with AI'
 date: '2026-01-17'
 tags: ['Productivity', 'Self-Analysis', 'Metrics', 'Reflection']
 part: 1
@@ -8,15 +8,15 @@ draft: false
 summary: 'I ran a privacy preserving analysis on 809 conversations. The results were humbling, surprising, and exactly what I needed to see.'
 ---
 
-I extracted 727MB of conversations from Cursor, Claude, and Codex. Then I ran a privacy preserving analysis on 809 conversations spanning 4 months. What I found changed how I think about my own workflow.
+I extracted 727MB of conversations from Cursor, Claude, and Codex. Then I ran a privacy preserving analysis on 809/100,000 conversations spanning 4 months. What I found changed how I think about working with AI.
 
 ## The Setup
 
 I built a pipeline that:
 
-1. Extracted conversations from local AI tools
+1. Extracted conversations from local AI tools: [GitHub](https://github.com/0xSero/ai-data-extraction)
 2. Analyzed behavioral signals without storing raw text
-3. Enforced k-anonymity (k=10) on all breakdowns
+3. Removed all environment variables and sensitive information
 4. Generated composite indices from keyword patterns
 
 Total: 19,539 user messages, 11,726 assistant messages, 16,484 tool uses.
@@ -25,7 +25,9 @@ Total: 19,539 user messages, 11,726 assistant messages, 16,484 tool uses.
 
 ### 1. Bias toward actionability
 
-My spec completeness score averaged 0.275. That is constraint/step framing. I frame problems with clear next steps rather than abstract discussions.
+My spec completeness score averaged 25%~ of all my conversations. I try to frame problems with clear next steps rather than abstract discussions.
+
+Examples, my most common conversations are debugging related loops:
 
 > "Fix the TypeScript error in file X. Error: Property 'toString' does not exist on type 'never'."
 
@@ -34,17 +36,17 @@ Not "I have a problem." Just the problem, the file, the error, the ask.
 ### 2. Debug loops over single-shot asks
 
 40.3% of my conversations included error sharing. I iterate. I share the error, get a fix, encounter the next error, share that, repeat.
-
-The debug maturity index was low (0.056), but that is because I rarely include minimal repro language. I jump straight to the error.
+This is incredibly wasteful, given i am in the loop when i shouldn't be. I jump straight to the errors as opposed to having the model lint, typecheck, and fix the errors autonomously.
 
 ### 3. Multi-system orchestration
 
 Top languages by conversation:
 
-- JavaScript: 182 conversations
 - Bash: 175
 - Go: 156
-- TypeScript: 133
+- Rust: 133
+- Solidity: 55
+- TypeScript: 335
 - SQL: 95
 
 I move between frontend (React, Next.js), backend (Go, TypeScript), infrastructure (Docker, AWS), automation (n8n, Slack integrations).
@@ -52,6 +54,7 @@ I move between frontend (React, Next.js), backend (Go, TypeScript), infrastructu
 ### 4. Testing awareness
 
 43.6% of conversations mentioned testing. I do not think of myself as test-disciplined. But I mention tests frequently even if I am bad at writing them.
+I actually wish I was more disciplined about testing, it saves a lot of time specifically because it helps catch bugs early and reduces the need for manual in-the-loop debugging.
 
 ## The Improvement Opportunities
 
@@ -59,30 +62,23 @@ The report was honest. Here are the gaps.
 
 ### 1. Minimal reproduction
 
-User conversations with repro language: 0.4%
-
-That means 99.6% of the time, I ask for help without providing a minimal reproducible example. I just dump the error and expect the AI to figure it out.
+User conversations with reproduction language: 0.4%
+That means 99.6% of the time, I ask for help without providing a minimal reproducible example. I just dump the error and expect the AI to figure it out, but it's not always enough. I need to improve my minimal reproduction skills.
 
 ### 2. Test discipline
 
-Testing mentions: 43.6%
-Testing discipline index: 0.096
-
-I talk about tests. I rarely write them. The assistant's testing discipline score (0.173) was nearly double mine. The AI tests more than I do.
-
-This is a pattern. I delegate testing. Which means I do not really own quality.
+In repositories where I have tests I did much less debugging, and much more feature development. In repositories without tests I did much more debugging, and much less feature development. This is very obvious, but it's not always easy to remember. I need to improve my test discipline.
 
 ### 3. Security hygiene
 
 Risky disclosure signals: 32.5%
 
-32.5% of my conversations contained signals that could indicate sensitive data exposure. API keys, environment variables, addresses. The heuristics do not store tokens, but they flag patterns.
+32.5% of my conversations contained signals that could indicate sensitive data exposure. API keys, environment variables, addresses. The heuristics do not store tokens, but they flag patterns. This makes life easier, but if I had spent more time configuring my tools and environment I wouldn't have to rely on the AI to flag them. I need to improve my security hygiene.
 
 ### 4. Acceptance criteria
 
-When delegating multi-file changes, I rarely specify acceptance criteria upfront. This shows up in the spec completeness index being barely above 0.25.
-
-The data caught what I knew was true. I get vague, then iterate, instead of being clear, then shipping.
+When delegating multi-file changes, I rarely specify acceptance criteria upfront. This shows up in the spec completeness index being barely above 25%.
+The data caught what I knew was true. I get vague, then iterate, instead of being clear, then shipping. This habit is not sustainable and has made me actively less productive. I need to improve my acceptance criteria.
 
 ## The Time-Series Trends
 
@@ -95,13 +91,11 @@ The weekly breakdown told a story.
 | 2025-12-22 | 117 | 0.237 | 0.073 | 0.110 | 0.093    | 41.9%  | 6,261     |
 | 2026-01-05 | 70  | 0.213 | 0.050 | 0.098 | 0.118    | 38.6%  | 3,044     |
 
-### Volume correlates with tool use
-
-In late December, tool uses exploded from 0 to 6,261. That corresponds with Claude Code integration. I went from conversational AI to agentic AI.
-
 ### Spec completeness degrades with volume
 
-As conversations increased, spec completeness dropped. More volume, less care. This is the classic trade-off. Speed over quality.
+As conversations increased, spec completeness dropped. More volume, less care. This is the classic trade-off. Speed over quality. It's easy to surrender to the temptation of shipping quickly, but it's important to prioritize quality over speed. By taking the time to write clear acceptance criteria, I can ensure that my work meets the necessary standards and reduces the risk of errors or security vulnerabilities.
+
+Specification, planning, and tests all improve my mental map of the system. By taking the time to write clear acceptance criteria, I can ensure that my work meets the necessary standards and reduces the risk of errors or security vulnerabilities.
 
 ### Security awareness is cyclical
 
@@ -127,7 +121,7 @@ This is telling. I think about structure more than execution. The AI executes be
 
 ### 1. I am an action-oriented, high-volume developer
 
-809 conversations in 4 months. That is about 6 to 7 conversations per day. I use AI as a thinking partner, not just a code generator.
+100,000+ conversations in 8 months. I use AI as for practically everything from code generation to debugging to testing to security to architecture, I also over use it when I want to run commands, setup docker, even when I want to commit and push. I use it for everything. This is telling, I need to be more intentional about how I can decrease my token usage and **optimize my workflows**.
 
 ### 2. I iterate more than I plan
 
@@ -199,12 +193,9 @@ grep -r "sk-\\|pk-\\|0x[a-fA-F0-9]{64}" --exclude-dir=node_modules
 
 ## The Bigger Picture
 
-809 conversations is a lot. It is also just 4 months. At this rate, I will have 2,400 conversations by the end of the year.
-
 The question is not whether I use AI. I clearly do, aggressively.
 
 The question is: am I using it to grow, or to avoid growth?
-
 The data suggests both. I ship faster (actionability is high). I think less (spec completeness is low). I delegate testing (assistant beats me).
 
 This is a trade-off. Every speedup has a cost. Every delegation has a gap.
@@ -213,7 +204,7 @@ This is a trade-off. Every speedup has a cost. Every delegation has a gap.
 
 If you are analyzing your own AI usage:
 
-1. Extract your data. It is harder than it sounds, but worth it
+1. Extract your data. It is easier than it sounds, and worth it
 2. Run privacy-preserving analysis. Do not store raw conversations
 3. Look for patterns, not scores. The indices are heuristics. Trends are truth
 4. Find gaps. Where are you delegating what you should own?
@@ -233,9 +224,7 @@ And now that it is true, I can work with it.
 
 ---
 
-Continue to Part 2: Training My Own Coding Model, where I take these insights and my actual conversations to train sero-nouscoder.
-
-_Data: 809 conversations, 19,539 messages, 16,484 tool uses, 4 months of AI-assisted development. Analysis: privacy-preserving, k-anonymous, heuristic-based. Verdict: honest._
+Continue to Part 2: Training My Own Coding Model, where I take these insights and my actual conversations to train sero-nouscoder [I trained a model on all my chats](https://www.sybilsolutions.ai/blog/02-training-my-coding-model-the-pipeline)
 
 ```
 
