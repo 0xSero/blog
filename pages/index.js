@@ -702,16 +702,13 @@ export default function Index() {
 
     const getClearRadius = (width, height, config) => {
       const minDim = Math.min(width, height)
-      const isMobile = width < 640
       const contentDiameter = Math.max(contentBounds.width, contentBounds.height)
       const contentRadius = contentDiameter * 0.5
-      const padding = Math.max(16, minDim * 0.05)
-      const safeRadius = Math.min(minDim * 0.48, contentRadius + padding)
-      const baseRadius = isMobile
-        ? width * 0.45
-        : minDim * (config.clearRadius || activeConfig.clearRadius)
+      const padding = contentRadius * 0.1
+      const targetRadius = contentRadius + padding
+      const maxRadius = minDim * 0.48
 
-      return Math.max(baseRadius, safeRadius)
+      return Math.min(targetRadius, maxRadius)
     }
 
     const createPatternInstance = (width, height) => {
@@ -739,6 +736,7 @@ export default function Index() {
           width: rect.width,
           height: rect.height,
         }
+        pattern = createPatternInstance(width, height)
       }
     }
 
