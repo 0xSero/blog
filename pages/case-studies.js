@@ -7,6 +7,7 @@ import { SlideUp } from '@/lib/transitions/PageTransition'
 
 export async function getStaticProps() {
   const caseStudies = await getAllFilesFrontMatter('case-studies')
+  // DEBUG: caseStudies count should be 11
   return { props: { caseStudies } }
 }
 
