@@ -37,7 +37,7 @@ I expected a dry theoretical textbook. What I got felt tailored made for me. Jus
 > "It's honestly incredible what we can do with some math. If you're into AI I highly recommend 'why machines learn' - @anilananth"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1946904185472950546)
 
-![Why Machines Learn book](https://pbs.twimg.com/media/GwTLCZ1XYAEQ-mJ.jpg)
+![Why Machines Learn book](/static/images/homelab/why-machines-learn.jpg)
 
 Slowly but surely I understood:
 
@@ -50,7 +50,7 @@ I learned about perceptrons, activation functions, loss surfaces. My software de
 > "Meet big daddy perceptron. One of the first iterations of machine learning. The basic perceptron as a concept takes in 3 parameters, and outputs a single value"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1997029753962762658)
 
-![Perceptron diagram](https://pbs.twimg.com/media/G7bf-JYXQAAPvVG.jpg)
+![Perceptron diagram](/static/images/homelab/perceptron.jpg)
 
 I started running small models locally on my MacBook. Curious to see how they would handle basic tasks. This only got more interesting after GPT-OSS models were released.
 
@@ -78,7 +78,7 @@ Looking back at my detailed usage analysis from October 2025:
 > "Token and Cost efficiency for my 4x 3090 Rig. I have systematically analyzed the cost of my AI usage since companies Cursor switched to token based pricing."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1976598147884253233)
 
-![Token cost analysis charts](https://pbs.twimg.com/media/G24tNJYX0AAxS3l.jpg)
+![Token cost analysis charts](/static/images/homelab/token-cost-analysis.jpg)
 
 | Platform          | Inference Value | Cost       | Value Ratio |
 | ----------------- | --------------- | ---------- | ----------- |
@@ -119,28 +119,28 @@ Here is what I discovered:
 > "Just picked up 4x 3090s and an AMD epyc. Building out a beast at home, let's see how this goes. Fully off Claude in 3 months."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1960397462428115167)
 
-![4x 3090s and EPYC unboxing](https://pbs.twimg.com/media/GzS7GYMWIAABUOS.jpg)
+![4x 3090s and EPYC unboxing](/static/images/homelab/4x-3090s-unboxing.jpg)
 
 ### August 30, 2025
 
 > "Building an AI rig at home - 96 VRAM (4x 3090s) - 512 GB DDR4 - 6 TB NVMe - Epyc 7443p - Corsair AX1600i - Thermal Core p90 open tower. I should be able to run: GPT-OSS-120B, Qwen 3 coder, GLM 4.5 Air, Smaller image models, Control my 3d printer, Build my own recommendation Algo"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1961726063496622447)
 
-![Build specs and goals](https://pbs.twimg.com/media/GzlzZIMXMAAGZzA.jpg)
+![Build specs and goals](/static/images/homelab/build-specs.jpg)
 
 ### August 31, 2025
 
 > "I'm realizing this is going to be a bit more difficult than expected, of course. These gosh darn GPUs draw up to 450w each at spikes. So I need 2 run 2 PSUs, and connect them together via an adapter, which means I need to separate the GPUs."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1962072337882271800)
 
-![PSU planning diagram](https://pbs.twimg.com/tweet_video_thumb/GzquY4PXkAApEDu.jpg)
+![PSU planning diagram](/static/images/homelab/psu-planning.jpg)
 
 ### September 6, 2025
 
 > "Now how the hell do I fit 4 3090s near this thing. I've never seen bigger GPUs"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1964226080702660850)
 
-![First look at GPU size](https://pbs.twimg.com/media/G0JVNR9W0AAWuds.jpg)
+![First look at GPU size](/static/images/homelab/gpu-size.jpg)
 
 ### September 16, 2025 — The Disaster
 
@@ -177,7 +177,7 @@ And that was just the beginning.
 > "It's a glorious day all 4 GPUs are live. This was one of the most fun projects I have ever done."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1968223965903790384)
 
-![All 4 GPUs live](https://pbs.twimg.com/media/G1CJP0OWYAAk0lL.jpg)
+![All 4 GPUs live](/static/images/homelab/4-gpus-live.jpg)
 
 ### September 20, 2025
 
@@ -194,7 +194,7 @@ And that was just the beginning.
 > "GLM-4.5-Air at full context. I ran benchmarks to see the tokens per second generated at various context lengths, what's incredible is it is faster than Claude Opus 3, and ranks way way way higher on every metric. Just 18 months ago that was the golden standard, and now I can run it at home"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1972259397880402008)
 
-![GLM-4.5-Air benchmarks](https://pbs.twimg.com/media/G17eNc_WUAAa3iX.jpg)
+![GLM-4.5-Air benchmarks](/static/images/homelab/glm-benchmarks.jpg)
 
 ### October 3, 2025
 
@@ -214,7 +214,7 @@ And that was just the beginning.
 > "9k tps throughput, 50~ output 25% in. Wild what 6 3090s can do."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1981374701046776199)
 
-![6x 3090 throughput results](https://pbs.twimg.com/media/G39BqmkW8AE5TAl.jpg)
+![6x 3090 throughput results](/static/images/homelab/6x-throughput.jpg)
 
 ### November 7, 2025
 
@@ -226,7 +226,7 @@ And that was just the beginning.
 > "The prophecy has been fulfilled. - 8x 3090s 192gb VRAM - 512GB DDR4 - 6 TB NVMe. I am in computer heaven"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1989359190897492016)
 
-![8x 3090 prophecy fulfilled](https://pbs.twimg.com/media/G5ufowtWMAA9duM.jpg)
+![8x 3090 prophecy fulfilled](/static/images/homelab/8x-prophecy.jpg)
 
 > "Cap the GPU wattage at 200w, I have 2 PSUs and a P2P adapter, the whole thing is 1.5k watts max, usually around half"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1989582109451690469)
@@ -236,14 +236,14 @@ And that was just the beginning.
 > "GPU Rich"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1990093705890468311)
 
-![GPU Rich](https://pbs.twimg.com/media/G547pmaWMAEaFh7.jpg)
+![GPU Rich](/static/images/homelab/gpu-rich.jpg)
 
 ## Hardware Specifications
 
 > "3 months ago I built this beast, let's check the costs today."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/2000494309955572100)
 
-![Final build costs breakdown](https://pbs.twimg.com/media/G8Mu-EHWcAgNBnF.jpg)
+![Final build costs breakdown](/static/images/homelab/build-costs.jpg)
 
 | Component   | Specification                        | Cost         |
 | ----------- | ------------------------------------ | ------------ |
@@ -295,14 +295,14 @@ And that was just the beginning.
 > "I spent the last few days running Cerebras' REAP models. I ran GLM-4.5-Air-Reap-82b - 12A bpw-8bit at full context: Prompt Processing - Peak: 1,012 T/s - Average: 920-980 T/s - Range: 754-1,012 T/s. Generation Speed: 43-44 T/s (consistent across context window)"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1982409232407285970)
 
-![Cerebras REAP benchmarks](https://pbs.twimg.com/amplify_video_thumb/1982408716268765184/img/_vsIL13aaSjI3fA3.jpg)
+![Cerebras REAP benchmarks](/static/images/homelab/cerebras-reap.jpg)
 
 ## Software Stack
 
 > "I built lmstudio for vLLM and sglang. I can't begin to explain how much of a pain in the ass it is not having a simple system to store, share, and build recipes with vLLM and sglang. Now I can request a model by hitting the oai api and if it's not loaded into memory it'll evict whatever is running and load the requested model"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1997726289621405817)
 
-![vLLM Studio interface](https://pbs.twimg.com/media/G7lZZiHWsAASwqC.jpg)
+![vLLM Studio interface](/static/images/homelab/vllm-studio.jpg)
 
 ```bash
 vllm serve /mnt/llm_model/GLM-4.5-Air-AWQ-4bit \
@@ -337,7 +337,7 @@ vllm serve /mnt/llm_model/GLM-4.5-Air-AWQ-4bit \
 > "1 week of my local llms working 24/7 nearly fully autonomously (Needs help every 8 hours or so.) 10% of this is output. 9.6M output tokens with claude sonnet = ~150$. 85M input tokens with sonnet = ~ 240$. This would have cost me 400$ on api prices."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1970912314384675175)
 
-![Autonomous LLM usage stats](https://pbs.twimg.com/media/G1oVhjfWcAATt5a.png)
+![Autonomous LLM usage stats](/static/images/homelab/autonomous-usage.png)
 
 ## Practical Use Case: Private Home RAG
 
@@ -349,7 +349,7 @@ This is my most valuable use case by far.
 > "I'm going to make a list of mini-blogs, X threads and repos that make it possible to run a local AI browser extension, home-rag, and mem-layer with just 24GB VRAM"
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1994020669386870872)
 
-![Home RAG announcement](https://pbs.twimg.com/media/G6wvLsfWMAA99ob.jpg)
+![Home RAG announcement](/static/images/homelab/home-rag.jpg)
 
 **What it indexes:**
 
@@ -375,7 +375,7 @@ I can ask natural language questions about years of data and get comprehensive a
 > "Did you know you can run local models in xcode? I am building a mobile app for my local llms with MCP access & full private data, it's going pretty well."
 > — [@seroxdesigns](https://x.com/seroxdesigns/status/1978051271308222912)
 
-![Mobile LLM app in Xcode](https://pbs.twimg.com/media/G3NyfCMWEAAzI5W.jpg)
+![Mobile LLM app in Xcode](/static/images/homelab/mobile-llm-xcode.jpg)
 
 ## What I Do With AI Now
 
