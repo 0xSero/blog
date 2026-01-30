@@ -25,7 +25,7 @@ const AIChatbot = ({ isOpen: externalIsOpen, onToggle }) => {
     if (externalIsOpen !== undefined && externalIsOpen !== isOpen) {
       setIsOpen(externalIsOpen)
     }
-  }, [externalIsOpen])
+  }, [externalIsOpen, isOpen])
 
   const toggleChat = () => {
     setIsOpen((prev) => {
@@ -72,6 +72,7 @@ const AIChatbot = ({ isOpen: externalIsOpen, onToggle }) => {
       const scripts = document.querySelectorAll('script[src*="voiceflow.com/widget"]')
       scripts.forEach((s) => s.remove())
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Only run once on mount
 
   const initializeVoiceflow = (projectId, apiKey) => {

@@ -1,4 +1,5 @@
 import Link from '@/components/Link'
+import Image from 'next/image'
 
 const contributors = [
   // Major Web3 Organizations
@@ -53,7 +54,9 @@ export default function ContributorScroll() {
             href={org.href}
             className="mx-8 flex flex-shrink-0 items-center gap-2 text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
-            {org.logo && <img src={org.logo} alt={org.name} className="h-5 w-auto" />}
+            {org.logo && (
+              <Image src={org.logo} alt={org.name} width={80} height={20} className="h-5 w-auto" />
+            )}
             {!org.logo && org.name}
           </Link>
         ))}
