@@ -6,7 +6,7 @@ const siteMetadata = {
   language: 'en-us',
   theme: 'dark', // system, dark or light - default to dark for Sybil Solutions
   siteUrl: 'https://www.sybilsolutions.ai',
-  siteRepo: 'https://github.com/0xSero',
+  siteRepo: 'https://github.com/0xSero/blog',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/og-image.png',
   socialBanner: '/static/images/og-image.png',
