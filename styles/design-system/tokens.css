@@ -64,7 +64,7 @@
   /* ============================================
      TYPOGRAPHY TOKENS
      ============================================ */
-  --font-family-sans: 'Geist', 'InterVariable', system-ui, -apple-system, sans-serif;
+  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-family-mono: 'Geist Mono', 'SF Mono', Consolas, monospace;
 
   --font-size-xs: 0.75rem; /* 12px */

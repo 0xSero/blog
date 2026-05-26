@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react'
+'use client'
+
+import { useState } from 'react'
+import { usePageInterval } from '@/lib/animations/usePageInterval'
 
 const testimonials = [
   {
@@ -34,12 +37,9 @@ const testimonials = [
 export default function TestimonialsCarousel() {
   const [current, setCurrent] = useState(0)
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % testimonials.length)
-    }, 10000)
-    return () => clearInterval(timer)
-  }, [])
+  usePageInterval(() => {
+    setCurrent((prev) => (prev + 1) % testimonials.length)
+  }, 10000)
 
   const testimonial = testimonials[current]
 
@@ -66,16 +66,24 @@ export default function TestimonialsCarousel() {
       </div>
 
       {/* Navigation dots */}
-      <div className="mt-6 flex justify-center gap-2">
+      <div className="mt-8 flex justify-center gap-3">
         {testimonials.map((_, index) => (
           <button
             key={index}
+            type="button"
             onClick={() => setCurrent(index)}
-            className={`h-2 rounded-full transition-all ${
-              index === current ? 'w-6 bg-accent-subtle' : 'bg-border-default w-2'
-            }`}
+            className="flex min-h-11 min-w-11 items-center justify-center"
             aria-label={`Go to testimonial ${index + 1}`}
-          />
+            aria-current={index === current ? 'true' : undefined}
+          >
+            <span
+              className={`h-3 rounded-full border transition-all ${
+                index === current
+                  ? 'w-8 border-accent-subtle bg-accent-subtle'
+                  : 'bg-text-muted/35 hover:bg-accent-subtle/60 w-3 border-border-strong'
+              }`}
+            />
+          </button>
         ))}
       </div>
     </div>

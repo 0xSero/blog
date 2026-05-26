@@ -1,21 +1,58 @@
+'use client'
+
 import Link from '@/components/Link'
-import Tag, { TagList } from '@/components/Tag'
-import siteMetadata from '@/data/siteMetadata'
-import { useState } from 'react'
-import Pagination from '@/components/Pagination'
-import formatDate from '@/lib/utils/formatDate'
+import ContentCard from '@/components/content/ContentCard'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
-export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
+const POSTS_BATCH_SIZE = 9
+
+export default function ListLayout({ posts, title }) {
   const [searchValue, setSearchValue] = useState('')
-  const filteredBlogPosts = posts.filter((frontMatter) => {
-    const searchContent =
-      frontMatter.title + frontMatter.summary + (frontMatter.tags || []).join(' ')
-    return searchContent.toLowerCase().includes(searchValue.toLowerCase())
-  })
+  const [visibleCount, setVisibleCount] = useState(POSTS_BATCH_SIZE)
+  const loadMoreRef = useRef(null)
+  const normalizedSearch = searchValue.trim().toLowerCase()
 
-  // If initialDisplayPosts exist, display it if no searchValue is specified
-  const displayPosts =
-    initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredBlogPosts
+  const filteredBlogPosts = useMemo(
+    () =>
+      posts.filter((frontMatter) => {
+        const searchContent = [
+          frontMatter.title,
+          frontMatter.summary,
+          ...(frontMatter.tags || []),
+        ].join(' ')
+
+        return searchContent.toLowerCase().includes(normalizedSearch)
+      }),
+    [posts, normalizedSearch]
+  )
+
+  const displayPosts = filteredBlogPosts.slice(0, visibleCount)
+  const hasMorePosts = visibleCount < filteredBlogPosts.length
+
+  useEffect(() => {
+    setVisibleCount(POSTS_BATCH_SIZE)
+  }, [normalizedSearch])
+
+  useEffect(() => {
+    const loadMoreNode = loadMoreRef.current
+
+    if (!loadMoreNode || !hasMorePosts) {
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setVisibleCount((count) => Math.min(count + POSTS_BATCH_SIZE, filteredBlogPosts.length))
+        }
+      },
+      { rootMargin: '320px 0px' }
+    )
+
+    observer.observe(loadMoreNode)
+
+    return () => observer.disconnect()
+  }, [filteredBlogPosts.length, hasMorePosts])
 
   return (
     <>
@@ -33,6 +70,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
           aria-label="Search articles"
           type="text"
           onChange={(e) => setSearchValue(e.target.value)}
+          value={searchValue}
           placeholder="Search articles..."
           className="border-border-default block w-full rounded-lg border bg-surface-elevated px-4 py-3 text-text-primary placeholder-text-muted focus:border-border-accent focus:outline-none focus:ring-2 focus:ring-border-accent"
         />
@@ -52,40 +90,39 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
         </svg>
       </div>
 
-      {/* Blog Grid - Japanese Minimalism: no cards, asymmetric dividers */}
-      <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-        {!filteredBlogPosts.length && (
+      <div className="grid auto-rows-fr gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+        {!displayPosts.length && (
           <p className="col-span-full text-center text-text-secondary">No posts found.</p>
         )}
         {displayPosts.map((frontMatter) => {
           const { slug, date, title, summary, tags } = frontMatter
           return (
-            <article key={slug} className="group divider-asymmetric relative pb-8">
-              {/* Tags */}
-              <div className="mb-3">
-                <TagList tags={tags} limit={2} />
-              </div>
-
-              {/* Title */}
-              <h2 className="mb-2 text-xl font-semibold text-text-primary transition-colors group-hover:text-accent-subtle">
-                <Link href={`/blog/${slug}`}>{title}</Link>
-              </h2>
-
-              {/* Summary */}
-              <p className="line-clamp-2 mb-4 flex-1 text-sm text-text-secondary">{summary}</p>
-
-              {/* Date */}
-              <time className="text-sm text-text-muted" dateTime={date}>
-                {formatDate(date)}
-              </time>
-            </article>
+            <ContentCard
+              key={slug}
+              date={date}
+              href={`/blog/${slug}`}
+              metaPlacement="header"
+              summary={summary}
+              tags={tags}
+              title={title}
+            />
           )
         })}
       </div>
 
-      {pagination && pagination.totalPages > 1 && !searchValue && (
-        <div className="mt-12">
-          <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
+      {hasMorePosts && (
+        <div ref={loadMoreRef} className="mt-12 flex justify-center">
+          <button
+            type="button"
+            onClick={() =>
+              setVisibleCount((count) =>
+                Math.min(count + POSTS_BATCH_SIZE, filteredBlogPosts.length)
+              )
+            }
+            className="min-h-11 rounded-full border border-border-default px-5 py-2 text-sm font-medium text-text-secondary transition-colors hover:border-border-accent hover:text-text-primary"
+          >
+            Load more
+          </button>
         </div>
       )}
     </>

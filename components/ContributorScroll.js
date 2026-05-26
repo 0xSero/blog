@@ -54,11 +54,9 @@ export default function ContributorScroll() {
           <Link
             key={`${org.name}-${i}`}
             href={org.href}
-            className="mx-8 flex flex-shrink-0 items-center gap-2 text-sm text-text-secondary transition-colors hover:text-text-primary"
+            className="mx-8 flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center gap-2 text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
-            {org.logo && (
-              <Image src={org.logo} alt={org.name} width={80} height={20} className="h-5 w-auto" />
-            )}
+            {org.logo && <Image src={org.logo} alt={org.name} width={87} height={20} />}
             {!org.logo && org.name}
           </Link>
         ))}

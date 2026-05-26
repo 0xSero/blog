@@ -1,3 +1,5 @@
+'use client'
+
 /* eslint-disable react/display-name */
 import { useMemo } from 'react'
 import { getMDXComponent } from 'mdx-bundler/client'
@@ -6,6 +8,15 @@ import CustomLink from './Link'
 import TOCInline from './TOCInline'
 import Pre from './Pre'
 import { BlogNewsletterForm } from './NewsletterForm'
+import AuthorLayout from '@/layouts/AuthorLayout'
+import PostLayout from '@/layouts/PostLayout'
+import PostSimple from '@/layouts/PostSimple'
+
+const layouts = {
+  AuthorLayout,
+  PostLayout,
+  PostSimple,
+}
 
 export const MDXComponents = {
   Image,
@@ -13,9 +24,9 @@ export const MDXComponents = {
   a: CustomLink,
   pre: Pre,
   BlogNewsletterForm: BlogNewsletterForm,
-  wrapper: ({ components, layout, ...rest }) => {
-    const Layout = require(`../layouts/${layout}`).default
-    return <Layout {...rest} />
+  wrapper: ({ components, layout, children, ...rest }) => {
+    const Layout = layouts[layout] || PostLayout
+    return <Layout {...rest}>{children}</Layout>
   },
 }
 

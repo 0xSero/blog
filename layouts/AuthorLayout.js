@@ -1,6 +1,5 @@
 import SocialIcon from '@/components/social-icons'
 import Image from '@/components/Image'
-import { PageSEO } from '@/components/SEO'
 import Link from '@/components/Link'
 
 export default function AuthorLayout({ children, frontMatter }) {
@@ -8,8 +7,6 @@ export default function AuthorLayout({ children, frontMatter }) {
 
   return (
     <>
-      <PageSEO title={`About - ${name}`} description={`About me - ${name}`} />
-
       {/* Hero Section */}
       <section className="section-breathe">
         <div className="grid gap-10 md:grid-cols-[200px_1fr] md:items-start">

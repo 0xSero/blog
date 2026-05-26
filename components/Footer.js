@@ -16,7 +16,7 @@ export default function Footer() {
       <div className="grid gap-8 md:grid-cols-4">
         {/* Brand */}
         <div className="md:col-span-2">
-          <Link href="/home" className="inline-block">
+          <Link href="/home" className="inline-flex min-h-11 items-center">
             <span className="text-2xl font-semibold tracking-tight text-text-primary">
               {siteMetadata.title}
             </span>
@@ -41,7 +41,7 @@ export default function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-text-secondary transition-colors hover:text-text-primary"
+                  className="inline-flex min-h-11 items-center text-text-secondary transition-colors hover:text-text-primary"
                 >
                   {link.title}
                 </Link>
@@ -57,7 +57,7 @@ export default function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-text-secondary transition-colors hover:text-text-primary"
+                  className="inline-flex min-h-11 items-center text-text-secondary transition-colors hover:text-text-primary"
                 >
                   {link.title}
                 </Link>

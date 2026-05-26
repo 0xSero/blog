@@ -26,7 +26,7 @@ module.exports = {
         14: '3.5rem',
       },
       fontFamily: {
-        sans: ['Geist', 'InterVariable', ...defaultTheme.fontFamily.sans],
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
         mono: ['Geist Mono', ...defaultTheme.fontFamily.mono],
       },
       colors: {
