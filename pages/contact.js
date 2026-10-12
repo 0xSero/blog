@@ -22,12 +22,25 @@ export default function Contact() {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/contact', {
+      // Web3Forms blocks server-side submissions on the free plan ("This method is
+      // not allowed... Pro plan is required"), which made /api/contact 500 on every
+      // submit. Post directly from the browser instead; the access key is a public
+      // client-side key by design.
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          access_key: '0a0ecb80-ba96-44f8-9efa-579664e6fe05',
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || 'Not provided',
+          message: formData.message,
+          subject: `New contact from ${formData.name} - Sybil Solutions`,
+          from_name: 'Sybil Solutions Contact Form',
+        }),
       })
 
       if (!response.ok) {

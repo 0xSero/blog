@@ -10,7 +10,7 @@ const siteMetadata = {
   siteLogo: '/static/images/logo.png',
   image: '/static/images/og-image.png',
   socialBanner: '/static/images/og-image.png',
-  email: 'contact@sybilsolutions.com',
+  email: 'sherif@sybilsolutions.ai',
   github: 'https://github.com/0xSero',
   twitter: 'https://x.com/0xSero',
   huggingface: 'https://huggingface.co/0xSero',
